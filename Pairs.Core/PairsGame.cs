@@ -8,8 +8,8 @@ namespace Pairs.Core
     {
         private readonly int[,] _cardNumbers;
 
-        private readonly int[] _scores;
-        private int NumberOfPlayers => _scores.Length;
+        public int[] Scores { get; }
+        private int NumberOfPlayers => Scores.Length;
         private int _firstFoundCardOfPlayer = -1;
 
         public int RowCount => _cardNumbers.GetLength(0);
@@ -21,11 +21,11 @@ namespace Pairs.Core
             {
                 if (IsEndOfGame())
                 {
-                    int maxScore = _scores.Max();
-                    int count = _scores.Count(x => x == maxScore);
+                    int maxScore = Scores.Max();
+                    int count = Scores.Count(x => x == maxScore);
                     if (count == 1)
                     {
-                        return Array.IndexOf(_scores, maxScore);
+                        return Array.IndexOf(Scores, maxScore);
                     }
                     return -1;
                 }
@@ -42,7 +42,7 @@ namespace Pairs.Core
                 throw new ArgumentException("Cannot by less than 1.", nameof(numberOfPlayers));
             }
             _cardNumbers = GetNewCardArray(gameLayout.RowCount, gameLayout.ColumnCount);
-            _scores = new int[numberOfPlayers];
+            Scores = new int[numberOfPlayers];
         }
 
         private int[,] GetNewCardArray(int rowCount, int columnCount)
@@ -126,7 +126,7 @@ namespace Pairs.Core
 
         private void AddPointToPlayerOnTurn()
         {
-            _scores[PlayerOnTheTurn]++;
+            Scores[PlayerOnTheTurn]++;
         }
 
         public bool IsPlayerOnTheTurn(int playerNumber)

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pairs.Core", "Pairs.Core\Pa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pairs.ConsoleApp", "Pairs.ConsoleApp\Pairs.ConsoleApp.csproj", "{D22857B8-984F-49AC-97AF-5848559CC196}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pairs.DesktopClient", "Pairs.DesktopClient\Pairs.DesktopClient.csproj", "{D73AC6A0-DE03-49E6-9DA4-174978571C28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D22857B8-984F-49AC-97AF-5848559CC196}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D22857B8-984F-49AC-97AF-5848559CC196}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D22857B8-984F-49AC-97AF-5848559CC196}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D73AC6A0-DE03-49E6-9DA4-174978571C28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D73AC6A0-DE03-49E6-9DA4-174978571C28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D73AC6A0-DE03-49E6-9DA4-174978571C28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D73AC6A0-DE03-49E6-9DA4-174978571C28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

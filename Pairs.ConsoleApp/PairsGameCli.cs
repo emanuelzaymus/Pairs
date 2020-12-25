@@ -41,7 +41,7 @@ namespace Pairs.ConsoleApp
                     if (cardNumber >= 0) // If the move is not valid, onthing happens
                     {
                         ShowCard(row, column, cardNumber);
-                        PrintCards(); // ShowCard(row, column, cardNumber)
+                        PrintCards();
 
                         if (_pairsGame.MoveWasCompleted)
                         {
