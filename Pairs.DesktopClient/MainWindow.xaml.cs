@@ -1,8 +1,11 @@
 ﻿using Pairs.Core;
+using Pairs.InterfaceLibrary;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,12 +26,25 @@ namespace Pairs.DesktopClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly ChannelFactory<IPairsGameService> _channelFactory;
+
+        private readonly IPairsGameService _pairsGameService;
+
         private readonly PairsGame _pairsGame;
 
         private Card _firstCard;
 
         public MainWindow()
         {
+            _channelFactory = new ChannelFactory<IPairsGameService>("PairsGameEndpoint");
+            _pairsGameService = _channelFactory.CreateChannel();
+
+            Trace.WriteLine(_pairsGameService.GetColumnCount());
+            Thread.Sleep(1000);
+            Trace.WriteLine(_pairsGameService.GetColumnCount());
+            Thread.Sleep(1000);
+            Trace.WriteLine(_pairsGameService.GetColumnCount());
+
             _pairsGame = new PairsGame(GameLayout.FourTimesThree);
 
             InitializeComponent();
@@ -105,7 +121,7 @@ namespace Pairs.DesktopClient
 
         private void ShowMessage(string msg)
         {
-            Message.Content += msg;
+            Message.Content = msg;
         }
 
         private void UpdatePlayerOnTurn()
@@ -142,6 +158,12 @@ namespace Pairs.DesktopClient
         private async Task Wait()
         {
             await Task.Delay(1000);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            _channelFactory.Close();
+            base.OnClosing(e);
         }
 
     }

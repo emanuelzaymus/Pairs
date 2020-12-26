@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pairs.DesktopClient
+namespace Pairs.Server
 {
-    class Move
+    class GamesManager
     {
-        public Card FirstCard { get; set; }
-        public Card SecondCard { get; set; }
     }
 }
