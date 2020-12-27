@@ -73,6 +73,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Move.cs" />
+    <Compile Include="PairsGameClient.cs" />
+    <Compile Include="PairsGamePresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -99,10 +101,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pairs.Core\Pairs.Core.csproj">
-      <Project>{e47bb133-2553-471b-8e0b-e52d20255e31}</Project>
-      <Name>Pairs.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pairs.InterfaceLibrary\Pairs.InterfaceLibrary.csproj">
       <Project>{913a70bc-795f-4f2e-98f6-b61f48994751}</Project>
       <Name>Pairs.InterfaceLibrary</Name>

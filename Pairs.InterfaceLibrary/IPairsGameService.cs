@@ -11,6 +11,9 @@ namespace Pairs.InterfaceLibrary
     public interface IPairsGameService
     {
         [OperationContract]
+        bool StartNewGame();
+
+        [OperationContract]
         int[] GetScores();
 
         [OperationContract]

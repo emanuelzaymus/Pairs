@@ -1,6 +1,4 @@
-﻿using Pairs.Core;
-using Pairs.InterfaceLibrary;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -26,31 +24,24 @@ namespace Pairs.DesktopClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ChannelFactory<IPairsGameService> _channelFactory;
-
-        private readonly IPairsGameService _pairsGameService;
-
-        private readonly PairsGame _pairsGame;
+        private readonly PairsGamePresenter _pairsGamePresenter = new PairsGamePresenter();
 
         private Card _firstCard;
 
         public MainWindow()
         {
-            _channelFactory = new ChannelFactory<IPairsGameService>("PairsGameEndpoint");
-            _pairsGameService = _channelFactory.CreateChannel();
+            _pairsGamePresenter.StartNewGame();
 
-            Trace.WriteLine(_pairsGameService.GetColumnCount());
+            Trace.WriteLine(_pairsGamePresenter.GetColumnCount());
             Thread.Sleep(1000);
-            Trace.WriteLine(_pairsGameService.GetColumnCount());
+            Trace.WriteLine(_pairsGamePresenter.GetColumnCount());
             Thread.Sleep(1000);
-            Trace.WriteLine(_pairsGameService.GetColumnCount());
-
-            _pairsGame = new PairsGame(GameLayout.FourTimesThree);
+            Trace.WriteLine(_pairsGamePresenter.GetColumnCount());
 
             InitializeComponent();
 
-            int rowCount = _pairsGame.RowCount;
-            int columnCount = _pairsGame.ColumnCount;
+            int rowCount = _pairsGamePresenter.GetRowCount();
+            int columnCount = _pairsGamePresenter.GetColumnCount();
 
             for (int i = 0; i < rowCount; i++)
             {
@@ -78,15 +69,15 @@ namespace Pairs.DesktopClient
             Card card = (Card)sender;
 
             ShowMessage($"{card} => {card.Row} {card.Column}");
-            int cardNumber = _pairsGame.NextMove(card.Row, card.Column);
+            int cardNumber = _pairsGamePresenter.NextMove(card.Row, card.Column);
             ShowCard(card, cardNumber); // Shows front face and disables card
 
-            if (_pairsGame.MoveWasCompleted)
+            if (_pairsGamePresenter.GetMoveWasCompleted())
             {
-                if (_pairsGame.WasSuccessfulMove)
+                if (_pairsGamePresenter.GetWasSuccessfulMove())
                 {
                     ShowMessage("SUCCESS");
-                    if (_pairsGame.IsEndOfGame())
+                    if (_pairsGamePresenter.IsEndOfGame())
                     {
                         ShowWinner();
                         UpdatePlayerOnTurn();
@@ -108,10 +99,11 @@ namespace Pairs.DesktopClient
 
         private void ShowWinner()
         {
-            int winner = _pairsGame.Winner;
+            int winner = _pairsGamePresenter.GetWinner();
             if (winner >= 0)
             {
-                ShowMessage($"The winner is player {winner}. (P0: {_pairsGame.Scores[0]}, P1: {_pairsGame.Scores[1]})");
+                int[] scores = _pairsGamePresenter.GetScores();
+                ShowMessage($"The winner is player {winner}. (P0: {scores[0]}, P1: {scores[1]})");
             }
             else
             {
@@ -126,9 +118,9 @@ namespace Pairs.DesktopClient
 
         private void UpdatePlayerOnTurn()
         {
-            if (!_pairsGame.IsEndOfGame())
+            if (!_pairsGamePresenter.IsEndOfGame())
             {
-                PlayerOnTurn.Content = _pairsGame.PlayerOnTheTurn;
+                PlayerOnTurn.Content = _pairsGamePresenter.GetPlayerOnTurn();
             }
             else
             {
@@ -162,7 +154,7 @@ namespace Pairs.DesktopClient
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            _channelFactory.Close();
+            _pairsGamePresenter.Dispose();
             base.OnClosing(e);
         }
 

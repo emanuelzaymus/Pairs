@@ -1,4 +1,5 @@
-﻿using Pairs.InterfaceLibrary;
+﻿using Pairs.Core;
+using Pairs.InterfaceLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,67 +15,69 @@ namespace Pairs.Server
         private PlayersManager _playersManager = new PlayersManager();
         private GamesManager _gamesManager = new GamesManager();
 
-        public int GetNewPlayerId()
-        {
-            return _playersManager.GetNewPlayerId();
-        }
+        private PairsGame _game;
 
-        public bool StartNewGame(int playerId, int withPlayerId)
+        //public int GetNewPlayerId()
+        //{
+        //    return _playersManager.GetNewPlayerId();
+        //}
+
+        public bool StartNewGame(/*int playerId, int withPlayerId*/)
         {
             // TODO: discover whether withPlayerId player is available (logged in and is not playing)
             // start new game 
+            _game = new PairsGame(GameLayout.FiveTimesFour);
             return true;
         }
 
         public int GetColumnCount()
         {
-            Console.WriteLine("sending 555.....");
-            return 555555;
+            return _game.ColumnCount;
         }
 
         public bool GetMoveWasCompleted()
         {
-            throw new NotImplementedException();
+            return _game.MoveWasCompleted;
         }
 
         public int GetPlayerOnTurn()
         {
-            throw new NotImplementedException();
+            return _game.PlayerOnTheTurn;
         }
 
         public int GetRowCount()
         {
-            throw new NotImplementedException();
+            return _game.RowCount;
         }
 
         public int[] GetScores()
         {
-            throw new NotImplementedException();
+            return _game.Scores;
         }
 
         public bool GetWasSuccessfulMove()
         {
-            throw new NotImplementedException();
+            return _game.WasSuccessfulMove;
         }
 
         public int GetWinner()
         {
-            throw new NotImplementedException();
+            return _game.Winner;
         }
 
         public bool IsEndOfGame()
         {
-            throw new NotImplementedException();
+            return _game.IsEndOfGame();
         }
 
         public bool IsPlayerOnTheTurn(int playerNumber)
         {
-            throw new NotImplementedException();
+            return _game.IsPlayerOnTheTurn(playerNumber);
         }
 
         public int NextMove(int row, int column)
         {
-            throw new NotImplementedException();
+            return _game.NextMove(row, column);
         }
     }
 }
