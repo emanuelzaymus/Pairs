@@ -1,4 +1,5 @@
 ﻿using Pairs.Core;
+using Pairs.InterfaceLibrary;
 
 namespace Pairs.ConsoleApp
 {

@@ -1,5 +1,8 @@
-﻿namespace Pairs.Core
+﻿using System.Runtime.Serialization;
+
+namespace Pairs.InterfaceLibrary
 {
+    [DataContract]
     public sealed class GameLayout
     {
         public static GameLayout ThreeTimesTwo = new GameLayout(3, 2);
@@ -12,7 +15,10 @@
         public static GameLayout EightTimesSeven = new GameLayout(8, 7);
         public static GameLayout EightTimesEight = new GameLayout(8, 8);
 
+        [DataMember]
         public int ColumnCount { get; }
+
+        [DataMember]
         public int RowCount { get; }
 
         private GameLayout(int columnCount, int rowCount)
