@@ -10,13 +10,13 @@ namespace Pairs.DesktopClient
     {
         private readonly PairsGameClient _pairsGameClient;
 
-        public delegate void MessageShownMethod(string message);
-        public event MessageShownMethod MessageShown;
+        public delegate void MessageShownEventHander(string message);
+        public event MessageShownEventHander MessageShown;
+        protected virtual void OnMessageShown(string message) => MessageShown?.Invoke(message);
 
-        public delegate void PlayerOnTurnUpdatedMethod(string playerOnTurn);
-        public event PlayerOnTurnUpdatedMethod PlayerOnTurnUpdated;
-
-        //private Card _firstCard;
+        public delegate void PlayerOnTurnUpdatedEventHandler(string playerOnTurn);
+        public event PlayerOnTurnUpdatedEventHandler PlayerOnTurnUpdated;
+        protected virtual void OnPlayerOnTurnUpdated(string playerOnTurn) => PlayerOnTurnUpdated?.Invoke(playerOnTurn);
 
         public PairsGamePresenter()
         {
@@ -25,14 +25,12 @@ namespace Pairs.DesktopClient
             _pairsGameClient.CardsHidden += HideCardsAsync;
             _pairsGameClient.FoundPairRemoved += RemoveFoundPairAsync;
             _pairsGameClient.PlayerOnTurnChanged += ChangePlayerOnTurn;
-            _pairsGameClient.WinnerSet += SetWinner;
+            _pairsGameClient.ResultsEvaluated += ShowResults;
         }
 
         internal bool StartNewGame()
         {
-            bool res = _pairsGameClient.StartNewGame();
-            UpdatePlayerOnTurn();
-            return res;
+            return _pairsGameClient.StartNewGame();
         }
 
         internal int GetRowCount()
@@ -48,91 +46,27 @@ namespace Pairs.DesktopClient
         internal void NextMove(Card card)
         {
             _pairsGameClient.NextMove(card);
-
-
-            //MessageShown($"{card} => {card.Row} {card.Column}");
-            //int cardNumber = _pairsGameClient.NextMove(card.Row, card.Column);
-            //ShowCard(card, cardNumber);
-
-            //if (_pairsGameClient.GetMoveWasCompleted())
-            //{
-            //    if (_pairsGameClient.GetWasSuccessfulMove())
-            //    {
-            //        MessageShown("SUCCESS");
-            //        if (_pairsGameClient.IsEndOfGame())
-            //        {
-            //            ShowWinner();
-            //            UpdatePlayerOnTurn();
-            //        }
-            //        RemoveFoundPairAsync(_firstCard, card); // Makes found pair invisible
-            //    }
-            //    else
-            //    {
-            //        MessageShown("FAILURE");
-            //        UpdatePlayerOnTurn();
-            //        HideCardsAsync(_firstCard, card); // Hides front faces and enables all cards
-            //    }
-            //}
-            //else
-            //{
-            //    _firstCard = card;
-            //}
         }
 
         private void ShowCard(Card card, int cardNumber)
         {
-            MessageShown($"{card} => {card.Row} {card.Column}");
+            OnMessageShown($"{card} => {card.Row} {card.Column}");
             card.Show(cardNumber);
         }
 
-        //private void ShowWinner()
-        //{
-        //    int winner = _pairsGameClient.GetWinner();
-        //    if (winner >= 0)
-        //    {
-        //        int[] scores = _pairsGameClient.GetScores();
-        //        MessageShown($"The winner is player {winner}. (P0: {scores[0]}, P1: {scores[1]})");
-        //    }
-        //    else
-        //    {
-        //        MessageShown($"It's draw.");
-        //    }
-        //}
-
-        private void SetWinner(int winner)
+        private void ShowResults(int winner, int[] scores)
         {
-            if (winner >= 0)
-            {
-                int[] scores = _pairsGameClient.GetScores();
-                MessageShown($"The winner is player {winner}. (P0: {scores[0]}, P1: {scores[1]})");
-            }
-            else
-            {
-                MessageShown($"It's draw.");
-            }
-            ChangePlayerOnTurn(-100);
-        }
-
-        private void UpdatePlayerOnTurn()
-        {
-            if (!_pairsGameClient.IsEndOfGame())
-            {
-                PlayerOnTurnUpdated(_pairsGameClient.GetPlayerOnTurn().ToString());
-            }
-            else
-            {
-                PlayerOnTurnUpdated(null);
-            }
+            OnMessageShown((winner >= 0 ? $"The winner is player {winner}." : $"It's draw.") + $" (P0: {scores[0]}, P1: {scores[1]})");
         }
 
         private void ChangePlayerOnTurn(int playerNumber)
         {
-            PlayerOnTurnUpdated(playerNumber.ToString());
+            OnPlayerOnTurnUpdated(playerNumber >= 0 ? playerNumber.ToString() : "---");
         }
 
         private async void HideCardsAsync(Card card1, Card card2)
         {
-            MessageShown("FAILURE");
+            OnMessageShown("FAILURE");
             await Wait();
             card1.Hide();
             card2.Hide();
@@ -140,7 +74,7 @@ namespace Pairs.DesktopClient
 
         private async void RemoveFoundPairAsync(Card card1, Card card2)
         {
-            MessageShown("SUCCESS");
+            OnMessageShown("SUCCESS");
             await Wait();
             card1.Remove();
             card2.Remove();

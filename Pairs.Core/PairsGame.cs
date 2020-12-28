@@ -11,10 +11,11 @@ namespace Pairs.Core
         public int[] Scores { get; }
         private int NumberOfPlayers => Scores.Length;
         private int _firstFoundCardOfPlayer = -1;
+        private int _playerOnTurn = 0;
 
         public int RowCount => _cardNumbers.GetLength(0);
         public int ColumnCount => _cardNumbers.GetLength(1);
-        public int PlayerOnTheTurn { get; private set; } = 0;
+        public int PlayerOnTheTurn => !IsEndOfGame() ? _playerOnTurn : -1;
         public int Winner
         {
             get
@@ -110,7 +111,7 @@ namespace Pairs.Core
 
         private void SetNextPlayersTurn()
         {
-            PlayerOnTheTurn = (PlayerOnTheTurn + 1) % NumberOfPlayers;
+            _playerOnTurn = (PlayerOnTheTurn + 1) % NumberOfPlayers;
         }
 
         private void RemoveFoundPair(int cardNumber)

@@ -17,23 +17,23 @@ namespace Pairs.DesktopClient
 
         public delegate void CardShownEventHandler(Card card, int cardNumber);
         public event CardShownEventHandler CardShown;
-        private void OnCardShown(Card card, int cardNumber) => CardShown?.Invoke(card, cardNumber);
+        protected virtual void OnCardShown(Card card, int cardNumber) => CardShown?.Invoke(card, cardNumber);
 
         public delegate void CardsHiddenEventHandler(Card card1, Card card2);
         public event CardsHiddenEventHandler CardsHidden;
-        private void OnCardsHidden(Card card1, Card card2) => CardsHidden?.Invoke(card1, card2);
+        protected virtual void OnCardsHidden(Card card1, Card card2) => CardsHidden?.Invoke(card1, card2);
 
         public delegate void PairRemovedEventHandler(Card card1, Card card2);
         public event PairRemovedEventHandler FoundPairRemoved;
-        private void OnFoundPairRemoved(Card card1, Card card2) => FoundPairRemoved?.Invoke(card1, card2);
+        protected virtual void OnFoundPairRemoved(Card card1, Card card2) => FoundPairRemoved?.Invoke(card1, card2);
 
         public delegate void PlayerOnTurnChangedEventHandler(int playerNumber);
         public event PlayerOnTurnChangedEventHandler PlayerOnTurnChanged;
-        private void OnPlayerOnTurnChanged(int playerNumber) => PlayerOnTurnChanged?.Invoke(playerNumber);
+        protected virtual void OnPlayerOnTurnChanged() => PlayerOnTurnChanged?.Invoke(_pairsGameService.GetPlayerOnTurn());
 
-        public delegate void WinnerSetEventHandler(int winner);
-        public event WinnerSetEventHandler WinnerSet;
-        private void OnWinnerSet(int winner) => WinnerSet?.Invoke(winner);
+        public delegate void ResultsEvaluatedEventHandler(int winner, int[] scores);
+        public event ResultsEvaluatedEventHandler ResultsEvaluated;
+        protected virtual void OnResultsEvaluated() => ResultsEvaluated?.Invoke(_pairsGameService.GetWinner(), _pairsGameService.GetScores());
 
         public PairsGameClient()
         {
@@ -43,7 +43,9 @@ namespace Pairs.DesktopClient
 
         internal bool StartNewGame()
         {
-            return _pairsGameService.StartNewGame();
+            bool res = _pairsGameService.StartNewGame();
+            OnPlayerOnTurnChanged();
+            return res;
         }
 
         internal int GetRowCount()
@@ -56,11 +58,6 @@ namespace Pairs.DesktopClient
             return _pairsGameService.GetColumnCount();
         }
 
-        //internal int NextMove(int row, int column)
-        //{
-        //    return _pairsGameService.NextMove(row, column);
-        //}
-
         internal void NextMove(Card card)
         {
             int cardNumber = _pairsGameService.NextMove(card.Row, card.Column);
@@ -70,22 +67,16 @@ namespace Pairs.DesktopClient
             {
                 if (_pairsGameService.GetWasSuccessfulMove())
                 {
-                    //MessageShown("SUCCESS");
+                    OnFoundPairRemoved(_firstCard, card);
                     if (_pairsGameService.IsEndOfGame())
                     {
-                        //ShowWinner();
-                        OnWinnerSet(_pairsGameService.GetWinner());
-                        //UpdatePlayerOnTurn();
+                        OnResultsEvaluated();
+                        OnPlayerOnTurnChanged();
                     }
-                    //RemoveFoundPairAsync(_firstCard, card); // Makes found pair invisible
-                    OnFoundPairRemoved(_firstCard, card);
                 }
                 else
                 {
-                    //MessageShown("FAILURE");
-                    //UpdatePlayerOnTurn();
-                    OnPlayerOnTurnChanged(_pairsGameService.GetPlayerOnTurn());
-                    //HideCardsAsync(_firstCard, card); // Hides front faces and enables all cards
+                    OnPlayerOnTurnChanged();
                     OnCardsHidden(_firstCard, card);
                 }
             }
@@ -95,40 +86,10 @@ namespace Pairs.DesktopClient
             }
         }
 
-
-        //internal bool GetMoveWasCompleted()
-        //{
-        //    return _pairsGameService.GetMoveWasCompleted();
-        //}
-
-        //internal bool GetWasSuccessfulMove()
-        //{
-        //    return _pairsGameService.GetWasSuccessfulMove();
-        //}
-
-        internal bool IsEndOfGame()
-        {
-            return _pairsGameService.IsEndOfGame();
-        }
-
-        //internal int GetWinner()
-        //{
-        //    return _pairsGameService.GetWinner();
-        //}
-
-        internal int[] GetScores()
-        {
-            return _pairsGameService.GetScores();
-        }
-
-        internal object GetPlayerOnTurn()
-        {
-            return _pairsGameService.GetPlayerOnTurn();
-        }
-
         public void Dispose()
         {
             _channelFactory.Close();
         }
+
     }
 }

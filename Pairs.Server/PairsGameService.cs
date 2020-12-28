@@ -26,7 +26,7 @@ namespace Pairs.Server
         {
             // TODO: discover whether withPlayerId player is available (logged in and is not playing)
             // start new game 
-            _game = new PairsGame(GameLayout.FiveTimesFour);
+            _game = new PairsGame(GameLayout.FourTimesThree);
             return true;
         }
 
