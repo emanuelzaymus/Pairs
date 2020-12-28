@@ -27,7 +27,7 @@ namespace Pairs.ConsoleApp
         {
             while (!_pairsGame.IsEndOfGame())
             {
-                int playerNumber = _pairsGame.PlayerOnTheTurn;
+                int playerNumber = _pairsGame.PlayerIdOnTurn;
 
                 Console.WriteLine($"PLAYER {playerNumber}, GET READY !");
                 Thread.Sleep(1000);

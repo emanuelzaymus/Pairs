@@ -8,15 +8,16 @@ namespace Pairs.Core
     public class PairsGame
     {
         private readonly int[,] _cardNumbers;
+        private readonly int[] _playerIds;
 
         public int[] Scores { get; }
-        private int NumberOfPlayers => Scores.Length;
+        private int NumberOfPlayers => _playerIds.Length;
         private int _firstFoundCardOfPlayer = -1;
-        private int _playerOnTurn = 0;
+        private int _playerIndexOnTurn = 0;
 
         public int RowCount => _cardNumbers.GetLength(0);
         public int ColumnCount => _cardNumbers.GetLength(1);
-        public int PlayerOnTheTurn => !IsEndOfGame() ? _playerOnTurn : -1;
+        public int PlayerIdOnTurn => !IsEndOfGame() ? _playerIds[_playerIndexOnTurn] : -1;
         public int Winner
         {
             get
@@ -27,7 +28,7 @@ namespace Pairs.Core
                     int count = Scores.Count(x => x == maxScore);
                     if (count == 1)
                     {
-                        return Array.IndexOf(Scores, maxScore);
+                        return _playerIds[Array.IndexOf(Scores, maxScore)];
                     }
                     return -1;
                 }
@@ -37,14 +38,11 @@ namespace Pairs.Core
         public bool MoveWasCompleted => _firstFoundCardOfPlayer < 0;
         public bool WasSuccessfulMove { get; private set; }
 
-        public PairsGame(GameLayout gameLayout, int numberOfPlayers = 2)
+        public PairsGame(GameLayout gameLayout, int playerId1, int playerId2)
         {
-            if (numberOfPlayers <= 0)
-            {
-                throw new ArgumentException("Cannot by less than 1.", nameof(numberOfPlayers));
-            }
             _cardNumbers = GetNewCardArray(gameLayout.RowCount, gameLayout.ColumnCount);
-            Scores = new int[numberOfPlayers];
+            _playerIds = new[] { playerId1, playerId2 };
+            Scores = new int[_playerIds.Length];
         }
 
         private int[,] GetNewCardArray(int rowCount, int columnCount)
@@ -112,7 +110,7 @@ namespace Pairs.Core
 
         private void SetNextPlayersTurn()
         {
-            _playerOnTurn = (PlayerOnTheTurn + 1) % NumberOfPlayers;
+            _playerIndexOnTurn = (_playerIndexOnTurn + 1) % NumberOfPlayers;
         }
 
         private void RemoveFoundPair(int cardNumber)
@@ -128,12 +126,12 @@ namespace Pairs.Core
 
         private void AddPointToPlayerOnTurn()
         {
-            Scores[PlayerOnTheTurn]++;
+            Scores[_playerIndexOnTurn]++;
         }
 
-        public bool IsPlayerOnTheTurn(int playerNumber)
+        public bool IsPlayerOnTheTurn(int playerId)
         {
-            return playerNumber == PlayerOnTheTurn;
+            return playerId == PlayerIdOnTurn;
         }
 
     }

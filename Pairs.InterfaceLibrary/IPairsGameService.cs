@@ -6,7 +6,10 @@ namespace Pairs.InterfaceLibrary
     public interface IPairsGameService
     {
         [OperationContract]
-        bool StartNewGame();
+        Player GetPlayer();
+
+        [OperationContract]
+        bool StartNewGame(GameLayout gameLayout);
 
         [OperationContract]
         int[] GetScores();
@@ -18,10 +21,10 @@ namespace Pairs.InterfaceLibrary
         int GetColumnCount();
 
         [OperationContract]
-        int GetPlayerOnTurn();
+        string GetPlayerOnTurn();
 
         [OperationContract]
-        int GetWinner();
+        string GetWinner();
 
         [OperationContract]
         bool GetMoveWasCompleted();

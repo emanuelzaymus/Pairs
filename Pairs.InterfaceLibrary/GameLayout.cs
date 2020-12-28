@@ -16,10 +16,10 @@ namespace Pairs.InterfaceLibrary
         public static GameLayout EightTimesEight = new GameLayout(8, 8);
 
         [DataMember]
-        public int ColumnCount { get; }
+        public int ColumnCount { get; set; }
 
         [DataMember]
-        public int RowCount { get; }
+        public int RowCount { get; set; }
 
         private GameLayout(int columnCount, int rowCount)
         {

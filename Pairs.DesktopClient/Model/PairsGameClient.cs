@@ -14,6 +14,9 @@ namespace Pairs.DesktopClient.Model
         private readonly ChannelFactory<IPairsGameService> _channelFactory;
         private readonly IPairsGameService _pairsGameService;
 
+        private Player _player;
+        private GameLayout _gameLayout;
+
         private ICard _firstCard;
 
         public delegate void CardShownEventHandler(ICard card, int cardNumber);
@@ -28,11 +31,11 @@ namespace Pairs.DesktopClient.Model
         public event PairRemovedEventHandler FoundPairRemoved;
         protected virtual void OnFoundPairRemoved(ICard card1, ICard card2) => FoundPairRemoved?.Invoke(card1, card2);
 
-        public delegate void PlayerOnTurnChangedEventHandler(int playerNumber);
+        public delegate void PlayerOnTurnChangedEventHandler(string playerNick);
         public event PlayerOnTurnChangedEventHandler PlayerOnTurnChanged;
         protected virtual void OnPlayerOnTurnChanged() => PlayerOnTurnChanged?.Invoke(_pairsGameService.GetPlayerOnTurn());
 
-        public delegate void ResultsEvaluatedEventHandler(int winner, int[] scores);
+        public delegate void ResultsEvaluatedEventHandler(string winner, int[] scores);
         public event ResultsEvaluatedEventHandler ResultsEvaluated;
         protected virtual void OnResultsEvaluated() => ResultsEvaluated?.Invoke(_pairsGameService.GetWinner(), _pairsGameService.GetScores());
 
@@ -40,11 +43,14 @@ namespace Pairs.DesktopClient.Model
         {
             _channelFactory = new ChannelFactory<IPairsGameService>("PairsGameEndpoint");
             _pairsGameService = _channelFactory.CreateChannel();
+
+            _player = _pairsGameService.GetPlayer();
         }
 
         internal bool StartNewGame()
         {
-            bool res = _pairsGameService.StartNewGame();
+            _gameLayout = GameLayout.ThreeTimesTwo;
+            bool res = _pairsGameService.StartNewGame(_gameLayout);
             OnPlayerOnTurnChanged();
             return res;
         }

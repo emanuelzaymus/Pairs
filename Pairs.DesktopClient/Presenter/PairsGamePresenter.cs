@@ -55,14 +55,15 @@ namespace Pairs.DesktopClient.Presenter
             card.Show(cardNumber);
         }
 
-        private void ShowResults(int winner, int[] scores)
+        private void ShowResults(string winner, int[] scores)
         {
-            OnMessageShown((winner >= 0 ? $"The winner is player {winner}." : $"It's draw.") + $" (P0: {scores[0]}, P1: {scores[1]})");
+            OnMessageShown((winner != null ? $"The winner is player {winner}." : $"It's draw.")
+                + $" (First Pl: {scores[0]}, Second Pl: {scores[1]})");
         }
 
-        private void ChangePlayerOnTurn(int playerNumber)
+        private void ChangePlayerOnTurn(string playerNick)
         {
-            OnPlayerOnTurnUpdated(playerNumber >= 0 ? playerNumber.ToString() : "---");
+            OnPlayerOnTurnUpdated(playerNick != null ? playerNick : "---");
         }
 
         private async void HideCardsAsync(ICard card1, ICard card2)

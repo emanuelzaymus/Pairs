@@ -22,11 +22,23 @@ namespace Pairs.Server
         //    return _playersManager.GetNewPlayerId();
         //}
 
-        public bool StartNewGame(/*int playerId, int withPlayerId*/)
+        bool isFirstPlayer = true;
+
+        public Player GetPlayer()
+        {
+            if (isFirstPlayer)
+            {
+                isFirstPlayer = false;
+                return new Player(1, "Adam");
+            }
+            return new Player(2, "Zoro");
+        }
+
+        public bool StartNewGame(GameLayout gameLayout /*int playerId, int withPlayerId*/)
         {
             // TODO: discover whether withPlayerId player is available (logged in and is not playing)
             // start new game 
-            _game = new PairsGame(GameLayout.FourTimesThree);
+            _game = new PairsGame(gameLayout, 1, 2);
             return true;
         }
 
@@ -40,9 +52,18 @@ namespace Pairs.Server
             return _game.MoveWasCompleted;
         }
 
-        public int GetPlayerOnTurn()
+        public string GetPlayerOnTurn()
         {
-            return _game.PlayerOnTheTurn;
+            int playerOnTheTurn = _game.PlayerIdOnTurn;
+            if (playerOnTheTurn == 1)
+            {
+                return "Adam";
+            }
+            else if (playerOnTheTurn == 2)
+            {
+                return "Zoro";
+            }
+            return null;
         }
 
         public int GetRowCount()
@@ -60,9 +81,18 @@ namespace Pairs.Server
             return _game.WasSuccessfulMove;
         }
 
-        public int GetWinner()
+        public string GetWinner()
         {
-            return _game.Winner;
+            int winner = _game.Winner;
+            if (winner == 1)
+            {
+                return "Adam";
+            }
+            else if (winner == 2)
+            {
+                return "Zoro";
+            }
+            return null;
         }
 
         public bool IsEndOfGame()
