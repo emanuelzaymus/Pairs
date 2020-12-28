@@ -33,13 +33,21 @@ namespace Pairs.DesktopClient
 
             _pairsGamePresenter.MessageShown += ShowMessage;
             _pairsGamePresenter.PlayerOnTurnUpdated += UpdatePlayerOnTurn;
+        }
+
+        private void StartNewGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearGameBoard();
 
             _pairsGamePresenter.StartNewGame();
 
-
             int rowCount = _pairsGamePresenter.GetRowCount();
             int columnCount = _pairsGamePresenter.GetColumnCount();
+            SetNewGameBoard(rowCount, columnCount);
+        }
 
+        private void SetNewGameBoard(int rowCount, int columnCount)
+        {
             for (int i = 0; i < rowCount; i++)
             {
                 PairGrid.RowDefinitions.Add(new RowDefinition() { MinHeight = 100 });
@@ -55,11 +63,21 @@ namespace Pairs.DesktopClient
                 Grid.SetRow(card, i / columnCount);
                 Grid.SetColumn(card, i % columnCount);
                 PairGrid.Children.Add(card);
-                card.Click += Card_Click;
+                card.Click += CardButton_Click;
             }
         }
 
-        private void Card_Click(object sender, RoutedEventArgs e)
+        private void ClearGameBoard()
+        {
+            PairGrid.Children.Clear();
+            PairGrid.RowDefinitions.Clear();
+            PairGrid.ColumnDefinitions.Clear();
+
+            ShowMessage(null);
+            UpdatePlayerOnTurn(null);
+        }
+
+        private void CardButton_Click(object sender, RoutedEventArgs e)
         {
             CardButton card = (CardButton)sender;
             _pairsGamePresenter.NextMove(card);

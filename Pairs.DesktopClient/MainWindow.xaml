@@ -17,6 +17,7 @@
             <Label x:Name="PlayerOnTurn" Content="x"/>
             <Label Content="Message: "/>
             <Label x:Name="Message" Content="x"/>
+            <Button x:Name="StartNewGameButton" Content="Start New Game" Margin="5" Click="StartNewGameButton_Click"/>
         </StackPanel>
 
         <Border Grid.Row="1" Padding="5">
