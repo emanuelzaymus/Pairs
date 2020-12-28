@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pairs.DesktopClient.Presenter;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -50,7 +51,7 @@ namespace Pairs.DesktopClient
 
             for (int i = 0; i < rowCount * columnCount; i++)
             {
-                Card card = new Card(i / columnCount, i % columnCount);
+                CardButton card = new CardButton(i / columnCount, i % columnCount);
                 Grid.SetRow(card, i / columnCount);
                 Grid.SetColumn(card, i % columnCount);
                 PairGrid.Children.Add(card);
@@ -60,7 +61,7 @@ namespace Pairs.DesktopClient
 
         private void Card_Click(object sender, RoutedEventArgs e)
         {
-            Card card = (Card)sender;
+            CardButton card = (CardButton)sender;
             _pairsGamePresenter.NextMove(card);
         }
 

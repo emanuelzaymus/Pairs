@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Pairs.DesktopClient.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pairs.DesktopClient
+namespace Pairs.DesktopClient.Presenter
 {
     class PairsGamePresenter : IDisposable
     {
@@ -43,12 +44,12 @@ namespace Pairs.DesktopClient
             return _pairsGameClient.GetColumnCount();
         }
 
-        internal void NextMove(Card card)
+        internal void NextMove(ICard card)
         {
             _pairsGameClient.NextMove(card);
         }
 
-        private void ShowCard(Card card, int cardNumber)
+        private void ShowCard(ICard card, int cardNumber)
         {
             OnMessageShown($"{card} => {card.Row} {card.Column}");
             card.Show(cardNumber);
@@ -64,7 +65,7 @@ namespace Pairs.DesktopClient
             OnPlayerOnTurnUpdated(playerNumber >= 0 ? playerNumber.ToString() : "---");
         }
 
-        private async void HideCardsAsync(Card card1, Card card2)
+        private async void HideCardsAsync(ICard card1, ICard card2)
         {
             OnMessageShown("FAILURE");
             await Wait();
@@ -72,7 +73,7 @@ namespace Pairs.DesktopClient
             card2.Hide();
         }
 
-        private async void RemoveFoundPairAsync(Card card1, Card card2)
+        private async void RemoveFoundPairAsync(ICard card1, ICard card2)
         {
             OnMessageShown("SUCCESS");
             await Wait();

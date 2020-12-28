@@ -1,16 +1,17 @@
-﻿using System.Windows;
+﻿using Pairs.DesktopClient.Model;
+using System.Windows;
 using System.Windows.Controls;
 
-namespace Pairs.DesktopClient
+namespace Pairs.DesktopClient.Presenter
 {
-    class Card : Button
+    class CardButton : Button, ICard
     {
         private const char _cardBackFace = '#';
 
         public int Row { get; }
         public int Column { get; }
 
-        public Card(int row, int column)
+        public CardButton(int row, int column)
         {
             Row = row;
             Column = column;
@@ -18,9 +19,9 @@ namespace Pairs.DesktopClient
             Margin = new Thickness(5);
         }
 
-        public void Show(int cardNumber)
+        public void Show(object cardFrontFace)
         {
-            Content = cardNumber;
+            Content = cardFrontFace;
             IsEnabled = false;
         }
 

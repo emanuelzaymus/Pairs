@@ -1,4 +1,5 @@
-﻿using Pairs.InterfaceLibrary;
+﻿using Pairs.DesktopClient.Presenter;
+using Pairs.InterfaceLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,26 +7,26 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pairs.DesktopClient
+namespace Pairs.DesktopClient.Model
 {
     class PairsGameClient : IDisposable
     {
         private readonly ChannelFactory<IPairsGameService> _channelFactory;
         private readonly IPairsGameService _pairsGameService;
 
-        private Card _firstCard;
+        private ICard _firstCard;
 
-        public delegate void CardShownEventHandler(Card card, int cardNumber);
+        public delegate void CardShownEventHandler(ICard card, int cardNumber);
         public event CardShownEventHandler CardShown;
-        protected virtual void OnCardShown(Card card, int cardNumber) => CardShown?.Invoke(card, cardNumber);
+        protected virtual void OnCardShown(ICard card, int cardNumber) => CardShown?.Invoke(card, cardNumber);
 
-        public delegate void CardsHiddenEventHandler(Card card1, Card card2);
+        public delegate void CardsHiddenEventHandler(ICard card1, ICard card2);
         public event CardsHiddenEventHandler CardsHidden;
-        protected virtual void OnCardsHidden(Card card1, Card card2) => CardsHidden?.Invoke(card1, card2);
+        protected virtual void OnCardsHidden(ICard card1, ICard card2) => CardsHidden?.Invoke(card1, card2);
 
-        public delegate void PairRemovedEventHandler(Card card1, Card card2);
+        public delegate void PairRemovedEventHandler(ICard card1, ICard card2);
         public event PairRemovedEventHandler FoundPairRemoved;
-        protected virtual void OnFoundPairRemoved(Card card1, Card card2) => FoundPairRemoved?.Invoke(card1, card2);
+        protected virtual void OnFoundPairRemoved(ICard card1, ICard card2) => FoundPairRemoved?.Invoke(card1, card2);
 
         public delegate void PlayerOnTurnChangedEventHandler(int playerNumber);
         public event PlayerOnTurnChangedEventHandler PlayerOnTurnChanged;
@@ -58,7 +59,7 @@ namespace Pairs.DesktopClient
             return _pairsGameService.GetColumnCount();
         }
 
-        internal void NextMove(Card card)
+        internal void NextMove(ICard card)
         {
             int cardNumber = _pairsGameService.NextMove(card.Row, card.Column);
             OnCardShown(card, cardNumber);
