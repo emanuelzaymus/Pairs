@@ -26,19 +26,17 @@ namespace Pairs.DesktopClient
     {
         private readonly PairsGamePresenter _pairsGamePresenter = new PairsGamePresenter();
 
-        private Card _firstCard;
+        //private Card _firstCard;
 
         public MainWindow()
         {
+            InitializeComponent();
+
+            _pairsGamePresenter.ShowMessage += ShowMessage;
+            _pairsGamePresenter.UpdatePlayerOnTurn += UpdatePlayerOnTurn;
+
             _pairsGamePresenter.StartNewGame();
 
-            Trace.WriteLine(_pairsGamePresenter.GetColumnCount());
-            Thread.Sleep(1000);
-            Trace.WriteLine(_pairsGamePresenter.GetColumnCount());
-            Thread.Sleep(1000);
-            Trace.WriteLine(_pairsGamePresenter.GetColumnCount());
-
-            InitializeComponent();
 
             int rowCount = _pairsGamePresenter.GetRowCount();
             int columnCount = _pairsGamePresenter.GetColumnCount();
@@ -58,99 +56,106 @@ namespace Pairs.DesktopClient
                 Grid.SetRow(card, i / columnCount);
                 Grid.SetColumn(card, i % columnCount);
                 PairGrid.Children.Add(card);
-                card.Click += ClickButton;
+                card.Click += Card_Click;
             }
 
-            UpdatePlayerOnTurn();
+            //UpdatePlayerOnTurn();
         }
 
-        private void ClickButton(object sender, RoutedEventArgs e)
+        private void Card_Click(object sender, RoutedEventArgs e)
         {
             Card card = (Card)sender;
+            _pairsGamePresenter.NextMove(card);
 
-            ShowMessage($"{card} => {card.Row} {card.Column}");
-            int cardNumber = _pairsGamePresenter.NextMove(card.Row, card.Column);
-            ShowCard(card, cardNumber); // Shows front face and disables card
 
-            if (_pairsGamePresenter.GetMoveWasCompleted())
-            {
-                if (_pairsGamePresenter.GetWasSuccessfulMove())
-                {
-                    ShowMessage("SUCCESS");
-                    if (_pairsGamePresenter.IsEndOfGame())
-                    {
-                        ShowWinner();
-                        UpdatePlayerOnTurn();
-                    }
-                    RemoveFoundPairAsync(_firstCard, card); // Makes found pair invisible
-                }
-                else
-                {
-                    ShowMessage("FAILURE");
-                    UpdatePlayerOnTurn();
-                    HideCardsAsync(_firstCard, card); // Hides front faces and enables all cards
-                }
-            }
-            else
-            {
-                _firstCard = card;
-            }
+            //ShowMessage($"{card} => {card.Row} {card.Column}");
+            //int cardNumber = _pairsGamePresenter.NextMove(card.Row, card.Column);
+            //ShowCard(card, cardNumber); // Shows front face and disables card
+
+            //if (_pairsGamePresenter.GetMoveWasCompleted())
+            //{
+            //    if (_pairsGamePresenter.GetWasSuccessfulMove())
+            //    {
+            //        ShowMessage("SUCCESS");
+            //        if (_pairsGamePresenter.IsEndOfGame())
+            //        {
+            //            ShowWinner();
+            //            UpdatePlayerOnTurn();
+            //        }
+            //        RemoveFoundPairAsync(_firstCard, card); // Makes found pair invisible
+            //    }
+            //    else
+            //    {
+            //        ShowMessage("FAILURE");
+            //        UpdatePlayerOnTurn();
+            //        HideCardsAsync(_firstCard, card); // Hides front faces and enables all cards
+            //    }
+            //}
+            //else
+            //{
+            //    _firstCard = card;
+            //}
         }
 
-        private void ShowWinner()
-        {
-            int winner = _pairsGamePresenter.GetWinner();
-            if (winner >= 0)
-            {
-                int[] scores = _pairsGamePresenter.GetScores();
-                ShowMessage($"The winner is player {winner}. (P0: {scores[0]}, P1: {scores[1]})");
-            }
-            else
-            {
-                ShowMessage($"It's draw.");
-            }
-        }
+        //private void ShowWinner()
+        //{
+        //    int winner = _pairsGamePresenter.GetWinner();
+        //    if (winner >= 0)
+        //    {
+        //        int[] scores = _pairsGamePresenter.GetScores();
+        //        ShowMessage($"The winner is player {winner}. (P0: {scores[0]}, P1: {scores[1]})");
+        //    }
+        //    else
+        //    {
+        //        ShowMessage($"It's draw.");
+        //    }
+        //}
 
         private void ShowMessage(string msg)
         {
             Message.Content = msg;
         }
 
-        private void UpdatePlayerOnTurn()
+        //private void UpdatePlayerOnTurn()
+        //{
+        //    if (!_pairsGamePresenter.IsEndOfGame())
+        //    {
+        //        PlayerOnTurn.Content = _pairsGamePresenter.GetPlayerOnTurn();
+        //    }
+        //    else
+        //    {
+        //        PlayerOnTurn.Content = null;
+        //    }
+        //}
+
+        private void UpdatePlayerOnTurn(string playerOnTurn)
         {
-            if (!_pairsGamePresenter.IsEndOfGame())
-            {
-                PlayerOnTurn.Content = _pairsGamePresenter.GetPlayerOnTurn();
-            }
-            else
-            {
-                PlayerOnTurn.Content = null;
-            }
+            PlayerOnTurn.Content = playerOnTurn;
         }
 
-        private void ShowCard(Card card, int cardNumber)
-        {
-            card.Show(cardNumber);
-        }
+        //private void ShowCard(Card card, int cardNumber)
+        //{
+        //    card.Show(cardNumber);
+        //}
 
-        private async void HideCardsAsync(Card card1, Card card2)
-        {
-            await Wait();
-            card1.Hide();
-            card2.Hide();
-        }
+        //private async void HideCardsAsync(Card card1, Card card2)
+        //{
+        //    await Wait();
+        //    card1.Hide();
+        //    card2.Hide();
+        //}
 
-        private async void RemoveFoundPairAsync(Card card1, Card card2)
-        {
-            await Wait();
-            card1.Remove();
-            card2.Remove();
-        }
+        //private async void RemoveFoundPairAsync(Card card1, Card card2)
+        //{
+        //    await Wait();
+        //    card1.Remove();
+        //    card2.Remove();
+        //}
 
-        private async Task Wait()
-        {
-            await Task.Delay(1000);
-        }
+        //private async Task Wait()
+        //{
+        //    await Task.Delay(1000);
+        //}
 
         protected override void OnClosing(CancelEventArgs e)
         {
