@@ -1,5 +1,4 @@
-﻿using Pairs.DesktopClient.Model;
-using Pairs.DesktopClient.Presenter;
+﻿using Pairs.DesktopClient.Presenter;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Pairs.DesktopClient
+namespace Pairs.DesktopClient.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -36,6 +35,17 @@ namespace Pairs.DesktopClient
             _pairsGamePresenter.PlayerOnTurnUpdated += UpdatePlayerOnTurn;
 
             _pairsGamePresenter.GetCard = GetCard;
+
+            new LogInWindow(LogIn).ShowDialog();
+        }
+
+        private void LogIn(LogInWindow logInWindow, PlayerCredentials playerCredentials)
+        {
+            bool success = _pairsGamePresenter.TryToLogIn(playerCredentials);
+            if (success)
+                logInWindow.Close();
+            else
+                logInWindow.ShowUnsuccessMessage();
         }
 
         private void StartNewGameButton_Click(object sender, RoutedEventArgs e)

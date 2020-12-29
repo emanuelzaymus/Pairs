@@ -8,7 +8,7 @@ namespace Pairs.InterfaceLibrary
     public interface IPairsGameService
     {
         [OperationContract]
-        Player GetPlayer();
+        Player TryToLogIn(string nick, string encryptedPassword);
 
         [OperationContract]
         bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout);

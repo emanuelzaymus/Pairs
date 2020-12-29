@@ -57,9 +57,14 @@ namespace Pairs.DesktopClient.Model
         {
             _channelFactory = new ChannelFactory<IPairsGameService>("PairsGameEndpoint");
             _pairsGameService = _channelFactory.CreateChannel();
+        }
 
-            _player = _pairsGameService.GetPlayer();
-
+        internal bool TryToLogIn(string nick, string password)
+        {
+            // TODO: encrypt password !!!
+            _player = _pairsGameService.TryToLogIn(nick, password);
+            Trace.WriteLine(_player != null ? $"Logged in successfully. Id: {_player.Id}" : "Logging eas not successful.");
+            return _player != null;
         }
 
         internal bool StartNewGame()

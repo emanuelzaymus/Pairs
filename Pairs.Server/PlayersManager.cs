@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Pairs.InterfaceLibrary;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pairs.Server
 {
     class PlayersManager
     {
-        internal int GetNewPlayerId()
+        private List<Player> _players = new List<Player>() { new Player(55, "Emo", "zzz") };
+
+        internal Player GetPlayer(string nick, string encryptedPassword)
         {
-            throw new NotImplementedException();
+            return _players.FirstOrDefault(x => x.Nick == nick && x.EncryptedPassword == encryptedPassword);
         }
     }
 }

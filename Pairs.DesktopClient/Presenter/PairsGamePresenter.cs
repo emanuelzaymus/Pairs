@@ -36,6 +36,11 @@ namespace Pairs.DesktopClient.Presenter
             _pairsGameClient.OpponentsPairRemoved += RemoveOpponentsPair;
         }
 
+        internal bool TryToLogIn(PlayerCredentials playerCredentials)
+        {
+            return _pairsGameClient.TryToLogIn(playerCredentials.Nick, playerCredentials.Password);
+        }
+
         internal bool StartNewGame()
         {
             return _pairsGameClient.StartNewGame();

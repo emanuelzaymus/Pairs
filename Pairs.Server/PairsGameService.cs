@@ -28,14 +28,15 @@ namespace Pairs.Server
 
         bool isFirstPlayer = true;
 
-        public Player GetPlayer()
+        public Player TryToLogIn(string nick, string encryptedPassword)
         {
-            if (isFirstPlayer)
-            {
-                isFirstPlayer = false;
-                return new Player(1, "Adam");
-            }
-            return new Player(2, "Zoro");
+            return _playersManager.GetPlayer(nick, encryptedPassword);
+            //if (isFirstPlayer)
+            //{
+            //    isFirstPlayer = false;
+            //    return new Player(1, "Adam");
+            //}
+            //return new Player(2, "Zoro");
         }
 
         public bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout)

@@ -11,10 +11,18 @@ namespace Pairs.InterfaceLibrary
         [DataMember]
         public string Nick { get; set; }
 
+        public string EncryptedPassword { get; }
+
         public Player(int playerId, string nick)
         {
             Id = playerId;
             Nick = nick;
         }
+
+        public Player(int id, string nick, string encryptedPassword) : this(id, nick)
+        {
+            EncryptedPassword = encryptedPassword;
+        }
+
     }
 }
