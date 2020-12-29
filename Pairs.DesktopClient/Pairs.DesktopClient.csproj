@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Encryption.cs" />
     <Compile Include="Presenter\NewPlayerCredentials.cs" />
     <Compile Include="Presenter\PlayerCredentials.cs" />
     <Compile Include="Views\LogInWindow.xaml.cs">
