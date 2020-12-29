@@ -21,22 +21,14 @@ namespace Pairs.Server
 
         private List<OpponentsMove> _moveBuffer = new List<OpponentsMove>();
 
-        //public int GetNewPlayerId()
-        //{
-        //    return _playersManager.GetNewPlayerId();
-        //}
-
-        bool isFirstPlayer = true;
-
         public Player TryToLogIn(string nick, string encryptedPassword)
         {
             return _playersManager.GetPlayer(nick, encryptedPassword);
-            //if (isFirstPlayer)
-            //{
-            //    isFirstPlayer = false;
-            //    return new Player(1, "Adam");
-            //}
-            //return new Player(2, "Zoro");
+        }
+
+        public bool TryToSignIn(string nick, string encryptedPassword)
+        {
+            return _playersManager.AddPlayer(nick, encryptedPassword);
         }
 
         public bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout)

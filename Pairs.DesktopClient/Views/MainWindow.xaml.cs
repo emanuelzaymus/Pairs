@@ -36,7 +36,17 @@ namespace Pairs.DesktopClient.Views
 
             _pairsGamePresenter.GetCard = GetCard;
 
-            new LogInWindow(LogIn).ShowDialog();
+            ShowLogInWindow();
+        }
+
+        private void ShowLogInWindow()
+        {
+            new LogInWindow(LogIn, ShowSignInWindow).ShowDialog();
+        }
+
+        private void ShowSignInWindow(LogInWindow logInWindow)
+        {
+            new SignInWindow(SignIn, logInWindow).ShowDialog();
         }
 
         private void LogIn(LogInWindow logInWindow, PlayerCredentials playerCredentials)
@@ -46,6 +56,17 @@ namespace Pairs.DesktopClient.Views
                 logInWindow.Close();
             else
                 logInWindow.ShowUnsuccessMessage();
+        }
+
+        private void SignIn(SignInWindow signInWindow, LogInWindow logInWindow, PlayerCredentials playerCredentials)
+        {
+            bool success = _pairsGamePresenter.TryToSignIn(playerCredentials);
+            if (success)
+            {
+                signInWindow.Close();
+                LogIn(logInWindow, playerCredentials);
+            }
+            else signInWindow.ShowNickAlreadyExistsMessage();
         }
 
         private void StartNewGameButton_Click(object sender, RoutedEventArgs e)

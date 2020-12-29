@@ -63,8 +63,16 @@ namespace Pairs.DesktopClient.Model
         {
             // TODO: encrypt password !!!
             _player = _pairsGameService.TryToLogIn(nick, password);
-            Trace.WriteLine(_player != null ? $"Logged in successfully. Id: {_player.Id}" : "Logging eas not successful.");
+            Trace.WriteLine(_player != null ? $"Logged in successfully. Id: {_player.Id}" : "Logging in was not successful.");
             return _player != null;
+        }
+
+        internal bool TryToSignIn(string nick, string password)
+        {
+            // TODO: encrypt password !!!
+            bool success = _pairsGameService.TryToSignIn(nick, password);
+            Trace.WriteLine(success ? "Sign in successfully." : "Signing in was not successful.");
+            return success;
         }
 
         internal bool StartNewGame()

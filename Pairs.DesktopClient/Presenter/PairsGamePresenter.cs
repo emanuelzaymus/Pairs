@@ -41,6 +41,11 @@ namespace Pairs.DesktopClient.Presenter
             return _pairsGameClient.TryToLogIn(playerCredentials.Nick, playerCredentials.Password);
         }
 
+        internal bool TryToSignIn(PlayerCredentials playerCredentials)
+        {
+            return _pairsGameClient.TryToSignIn(playerCredentials.Nick, playerCredentials.Password);
+        }
+
         internal bool StartNewGame()
         {
             return _pairsGameClient.StartNewGame();
