@@ -44,6 +44,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Response\OpponentsMove.cs" />
+    <Compile Include="Response\Card.cs" />
     <Compile Include="GameLayout.cs" />
     <Compile Include="IPairsGameService.cs" />
     <Compile Include="Player.cs" />

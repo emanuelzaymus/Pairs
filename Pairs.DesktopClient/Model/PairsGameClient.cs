@@ -1,7 +1,9 @@
 ﻿using Pairs.DesktopClient.Presenter;
 using Pairs.InterfaceLibrary;
+using Pairs.InterfaceLibrary.Response;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -39,18 +41,31 @@ namespace Pairs.DesktopClient.Model
         public event ResultsEvaluatedEventHandler ResultsEvaluated;
         protected virtual void OnResultsEvaluated() => ResultsEvaluated?.Invoke(_pairsGameService.GetWinner(), _pairsGameService.GetScores());
 
+        public delegate void OpponentsCardShownEventHandler(Card card);
+        public event OpponentsCardShownEventHandler OpponentsCardShown;
+        protected virtual void OnOpponentsCardShown(Card card) => OpponentsCardShown?.Invoke(card);
+
+        public delegate void OpponentsCardsHiddenEventHandler(Card card1, Card card2);
+        public event OpponentsCardsHiddenEventHandler OpponentsCardsHidden;
+        protected virtual void OnOpponentsCardsHidden(Card card1, Card card2) => OpponentsCardsHidden?.Invoke(card1, card2);
+
+        public delegate void OpponentsPairRemovedEventHandler(Card card1, Card card2);
+        public event OpponentsPairRemovedEventHandler OpponentsPairRemoved;
+        protected virtual void OnOpponentsPairRemoved(Card card1, Card card2) => OpponentsPairRemoved?.Invoke(card1, card2);
+
         public PairsGameClient()
         {
             _channelFactory = new ChannelFactory<IPairsGameService>("PairsGameEndpoint");
             _pairsGameService = _channelFactory.CreateChannel();
 
             _player = _pairsGameService.GetPlayer();
+
         }
 
         internal bool StartNewGame()
         {
             _gameLayout = GameLayout.ThreeTimesTwo;
-            bool res = _pairsGameService.StartNewGame(_gameLayout);
+            bool res = _pairsGameService.StartNewGame(_player.Id, 2, _gameLayout);
             OnPlayerOnTurnChanged();
             return res;
         }
@@ -67,7 +82,8 @@ namespace Pairs.DesktopClient.Model
 
         internal void NextMove(ICard card)
         {
-            int cardNumber = _pairsGameService.NextMove(card.Row, card.Column);
+            // TODO: do not allow make a move when its mot my turn
+            int cardNumber = _pairsGameService.NextMove(_player.Id, card.Row, card.Column);
             OnCardShown(card, cardNumber);
 
             if (_pairsGameService.GetMoveWasCompleted())
@@ -85,12 +101,58 @@ namespace Pairs.DesktopClient.Model
                 {
                     OnPlayerOnTurnChanged();
                     OnCardsHidden(_firstCard, card);
+                    ReadFromServiceAsync();
                 }
             }
             else
             {
                 _firstCard = card;
             }
+        }
+
+        // TODO: add cancelation token - when I close the app to and this taks in the Dispose() method
+        private async void ReadFromServiceAsync()
+        {
+            Card firstOpponentCard = null;
+            while (true)
+            {
+                await Wait();
+                var opponentMoves = _pairsGameService.ReadFromService(_player.Id);
+                Trace.WriteLine(_player.Id + " === " + opponentMoves + " COUNT: " + opponentMoves.Count);
+                foreach (var move in opponentMoves)
+                {
+                    OnOpponentsCardShown(move.Card);
+
+                    if (move.IsCompleted)
+                    {
+                        if (move.IsSuccessful.Value)
+                        {
+                            OnOpponentsPairRemoved(firstOpponentCard, move.Card);
+                            if (_pairsGameService.IsEndOfGame())
+                            {
+                                OnResultsEvaluated();
+                                OnPlayerOnTurnChanged();
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            OnPlayerOnTurnChanged();
+                            OnOpponentsCardsHidden(firstOpponentCard, move.Card);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        firstOpponentCard = move.Card;
+                    }
+                }
+            }
+        }
+
+        private async Task Wait()
+        {
+            await Task.Delay(1000);
         }
 
         public void Dispose()

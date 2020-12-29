@@ -74,9 +74,14 @@ namespace Pairs.Core
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
-        /// <returns>Whether the move was valid.</returns>
-        public int NextMove(int row, int column)
+        /// <returns>Cards number.</returns>
+        public int NextMove(int playerId, int row, int column)
         {
+            if (playerId != PlayerIdOnTurn)
+            {
+                throw new Exception($"It is not turn of this player. (playerId: {playerId})");
+            }
+
             if (row >= 0 && row < RowCount && column >= 0 && column < ColumnCount)
             {
                 int foundCardNum = _cardNumbers[row, column];

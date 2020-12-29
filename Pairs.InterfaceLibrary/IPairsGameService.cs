@@ -1,4 +1,6 @@
-﻿using System.ServiceModel;
+﻿using Pairs.InterfaceLibrary.Response;
+using System.Collections.Generic;
+using System.ServiceModel;
 
 namespace Pairs.InterfaceLibrary
 {
@@ -9,7 +11,7 @@ namespace Pairs.InterfaceLibrary
         Player GetPlayer();
 
         [OperationContract]
-        bool StartNewGame(GameLayout gameLayout);
+        bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout);
 
         [OperationContract]
         int[] GetScores();
@@ -36,9 +38,12 @@ namespace Pairs.InterfaceLibrary
         bool IsEndOfGame();
 
         [OperationContract]
-        int NextMove(int row, int column);
+        int NextMove(int playerId, int row, int column);
 
         [OperationContract]
         bool IsPlayerOnTheTurn(int playerNumber);
+
+        [OperationContract]
+        List<OpponentsMove> ReadFromService(int playerId);
     }
 }

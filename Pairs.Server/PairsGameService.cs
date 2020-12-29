@@ -1,7 +1,9 @@
 ﻿using Pairs.Core;
 using Pairs.InterfaceLibrary;
+using Pairs.InterfaceLibrary.Response;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -16,6 +18,8 @@ namespace Pairs.Server
         private GamesManager _gamesManager = new GamesManager();
 
         private PairsGame _game;
+
+        private List<OpponentsMove> _moveBuffer = new List<OpponentsMove>();
 
         //public int GetNewPlayerId()
         //{
@@ -34,11 +38,11 @@ namespace Pairs.Server
             return new Player(2, "Zoro");
         }
 
-        public bool StartNewGame(GameLayout gameLayout /*int playerId, int withPlayerId*/)
+        public bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout)
         {
             // TODO: discover whether withPlayerId player is available (logged in and is not playing)
             // start new game 
-            _game = new PairsGame(gameLayout, 1, 2);
+            _game = new PairsGame(gameLayout, playerId, withPlayerId);
             return true;
         }
 
@@ -105,9 +109,32 @@ namespace Pairs.Server
             return _game.IsPlayerOnTheTurn(playerNumber);
         }
 
-        public int NextMove(int row, int column)
+        public int NextMove(int playerId, int row, int column)
         {
-            return _game.NextMove(row, column);
+            try
+            {
+                int cardNumber = _game.NextMove(playerId, row, column);
+
+                bool? isSuccessful = _game.MoveWasCompleted ? _game.WasSuccessfulMove : (bool?)null;
+                _moveBuffer.Add(new OpponentsMove(new Card(row, column, cardNumber), isSuccessful));
+
+                return cardNumber;
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("Wrong PLAYER !!!");
+                Trace.WriteLine(e);
+                return -1000;
+            }
         }
+
+        public List<OpponentsMove> ReadFromService(int playerId)
+        {
+            Trace.WriteLine("Server - ReadFromServer with id: " + playerId);
+            List<OpponentsMove> moves = _moveBuffer.Select(x => x).ToList();
+            _moveBuffer.Clear();
+            return moves;
+        }
+
     }
 }

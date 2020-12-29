@@ -1,4 +1,5 @@
-﻿using Pairs.DesktopClient.Presenter;
+﻿using Pairs.DesktopClient.Model;
+using Pairs.DesktopClient.Presenter;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,6 +34,8 @@ namespace Pairs.DesktopClient
 
             _pairsGamePresenter.MessageShown += ShowMessage;
             _pairsGamePresenter.PlayerOnTurnUpdated += UpdatePlayerOnTurn;
+
+            _pairsGamePresenter.GetCard = GetCard;
         }
 
         private void StartNewGameButton_Click(object sender, RoutedEventArgs e)
@@ -91,6 +94,16 @@ namespace Pairs.DesktopClient
         private void UpdatePlayerOnTurn(string playerOnTurn)
         {
             PlayerOnTurn.Content = playerOnTurn;
+        }
+
+        private CardButton GetCard(int row, int column)
+        {
+            foreach (CardButton cardBtn in PairGrid.Children)
+            {
+                if (cardBtn.Row == row && cardBtn.Column == column)
+                    return cardBtn;
+            }
+            return null;
         }
 
         protected override void OnClosing(CancelEventArgs e)
