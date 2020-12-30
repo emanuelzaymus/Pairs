@@ -43,7 +43,6 @@ namespace Pairs.DesktopClient.Model
 
         public delegate void OpponentsCardShownEventHandler(Card card);
         public event OpponentsCardShownEventHandler OpponentsCardShown;
-
         protected virtual void OnOpponentsCardShown(Card card) => OpponentsCardShown?.Invoke(card);
 
         public delegate void OpponentsCardsHiddenEventHandler(Card card1, Card card2);
@@ -181,7 +180,14 @@ namespace Pairs.DesktopClient.Model
 
         public void Dispose()
         {
+            LogOut();
             _channelFactory.Close();
+        }
+
+        private void LogOut()
+        {
+            bool success = _pairsGameService.LogOut(_player.Id);
+            Trace.WriteLine($"Player {_player.Nick} was {(success ? "NOT " : " ")}logged out.");
         }
 
     }

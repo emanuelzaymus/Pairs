@@ -23,11 +23,6 @@ namespace Pairs.Server
             return player;
         }
 
-        private Player GetPlayer(string nick, string encryptedPassword)
-        {
-            return _players.FirstOrDefault(x => x.Nick == nick && x.EncryptedPassword == encryptedPassword);
-        }
-
         internal bool AddPlayer(string nick, string encryptedPassword)
         {
             if (_players.Any(x => x.Nick == nick))
@@ -36,6 +31,27 @@ namespace Pairs.Server
             }
             _players.Add(new Player(_nextPlayerId++, nick, encryptedPassword));
             return true;
+        }
+
+        internal bool LogOut(int playerId)
+        {
+            var player = GetPlayer(playerId);
+            if (player != null)
+            {
+                player.IsOnline = false;
+                return true;
+            }
+            return false;
+        }
+
+        private Player GetPlayer(string nick, string encryptedPassword)
+        {
+            return _players.FirstOrDefault(p => p.Nick == nick && p.EncryptedPassword == encryptedPassword);
+        }
+
+        private Player GetPlayer(int playerId)
+        {
+            return _players.FirstOrDefault(p => p.Id == playerId);
         }
 
     }

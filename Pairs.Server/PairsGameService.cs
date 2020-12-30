@@ -31,6 +31,11 @@ namespace Pairs.Server
             return _playersManager.AddPlayer(nick, encryptedPassword);
         }
 
+        public bool LogOut(int playerId)
+        {
+            return _playersManager.LogOut(playerId);
+        }
+
         public List<string> GetAvailablePlayers(int playerId)
         {
             return _playersManager.OnlinePlayers.Where(p => p.Id != playerId).Select(p => p.Nick).ToList();
