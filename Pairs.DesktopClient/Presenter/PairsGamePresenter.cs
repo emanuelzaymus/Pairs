@@ -111,7 +111,7 @@ namespace Pairs.DesktopClient.Presenter
 
         private void ChangePlayerOnTurn(string playerNick)
         {
-            OnPlayerOnTurnUpdated(playerNick != null ? playerNick : "---");
+            OnPlayerOnTurnUpdated(playerNick ?? "---");
         }
 
         private async void HideCardsAsync(ICard card1, ICard card2)

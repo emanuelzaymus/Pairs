@@ -1,13 +1,10 @@
-﻿using Pairs.Core;
-using Pairs.InterfaceLibrary;
+﻿using Pairs.InterfaceLibrary;
 using Pairs.InterfaceLibrary.Response;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pairs.Server
 {
@@ -19,10 +16,6 @@ namespace Pairs.Server
         private PlayersManager _playersManager;
         private InvitationsManager _invitationsManager;
         private GamesManager _gamesManager = new GamesManager();
-
-        private PairsGame _game;
-
-        private List<OpponentsMove> _moveBuffer = new List<OpponentsMove>();
 
         public PairsGameService()
         {
@@ -84,86 +77,48 @@ namespace Pairs.Server
             return _invitationsManager.GetInvitationReply(playerId);
         }
 
-        public bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout)
+        public bool GetMoveWasCompleted(int playerId)
         {
-            // TODO: discover whether withPlayerId player is available (logged in and is not playing)
-            // start new game 
-            // TODO: set Player.IsPlaying to true
-            _game = new PairsGame(gameLayout, playerId, withPlayerId);
-            return true;
+            return _gamesManager.GetGame(playerId).MoveWasCompleted;
         }
 
-        public int GetColumnCount()
+        public int GetPlayerOnTurn(int playerId)
         {
-            return _game.ColumnCount;
+            return _gamesManager.GetGame(playerId).PlayerIdOnTurn;
         }
 
-        public bool GetMoveWasCompleted()
+        public int[] GetScores(int playerId)
         {
-            return _game.MoveWasCompleted;
+            return _gamesManager.GetGame(playerId).Scores;
         }
 
-        public string GetPlayerOnTurn()
+        public bool GetWasSuccessfulMove(int playerId)
         {
-            int playerOnTheTurn = _game.PlayerIdOnTurn;
-            if (playerOnTheTurn == 1)
-            {
-                return "Adam";
-            }
-            else if (playerOnTheTurn == 2)
-            {
-                return "Zoro";
-            }
-            return null;
+            return _gamesManager.GetGame(playerId).WasSuccessfulMove;
         }
 
-        public int GetRowCount()
+        public int GetWinner(int playerId)
         {
-            return _game.RowCount;
+            return _gamesManager.GetGame(playerId).Winner;
         }
 
-        public int[] GetScores()
+        public bool IsEndOfGame(int playerId)
         {
-            return _game.Scores;
+            return _gamesManager.GetGame(playerId).IsEndOfGame();
         }
 
-        public bool GetWasSuccessfulMove()
+        public bool IsPlayerOnTheTurn(int playerId, int playerNumber)
         {
-            return _game.WasSuccessfulMove;
-        }
-
-        public string GetWinner()
-        {
-            int winner = _game.Winner;
-            if (winner == 1)
-            {
-                return "Adam";
-            }
-            else if (winner == 2)
-            {
-                return "Zoro";
-            }
-            return null;
-        }
-
-        public bool IsEndOfGame()
-        {
-            return _game.IsEndOfGame();
-        }
-
-        public bool IsPlayerOnTheTurn(int playerNumber)
-        {
-            return _game.IsPlayerOnTheTurn(playerNumber);
+            return _gamesManager.GetGame(playerId).IsPlayerOnTheTurn(playerNumber);
         }
 
         public int NextMove(int playerId, int row, int column)
         {
             try
             {
-                int cardNumber = _game.NextMove(playerId, row, column);
+                int cardNumber = _gamesManager.GetGame(playerId).NextMove(playerId, row, column);
 
-                bool? isSuccessful = _game.MoveWasCompleted ? _game.WasSuccessfulMove : (bool?)null;
-                _moveBuffer.Add(new OpponentsMove(new Card(row, column, cardNumber), isSuccessful));
+                _gamesManager.GetGameOfPlayers(playerId).AddOpponentsMove(row, column, cardNumber);
 
                 return cardNumber;
             }
@@ -175,12 +130,10 @@ namespace Pairs.Server
             }
         }
 
-        public List<OpponentsMove> ReadFromService(int playerId)
+        public List<OpponentsMove> ReadOpponentsMoves(int playerId)
         {
             Trace.WriteLine("Server - ReadFromServer with id: " + playerId);
-            List<OpponentsMove> moves = _moveBuffer.Select(x => x).ToList();
-            _moveBuffer.Clear();
-            return moves;
+            return _gamesManager.GetGameOfPlayers(playerId).PopAllOpponentsMove();
         }
 
         public void Dispose()

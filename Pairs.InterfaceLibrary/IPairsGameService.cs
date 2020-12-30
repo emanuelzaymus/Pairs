@@ -7,11 +7,7 @@ namespace Pairs.InterfaceLibrary
     [ServiceContract]
     public interface IPairsGameService
     {
-        /// <summary>
-        /// </summary>
-        /// <param name="nick"></param>
-        /// <param name="encryptedPassword"></param>
-        /// <returns>Returns ID of logged in player.</returns>
+        /// <returns>ID of logged in player.</returns>
         [OperationContract]
         int? TryToLogIn(string nick, string encryptedPassword);
 
@@ -24,11 +20,6 @@ namespace Pairs.InterfaceLibrary
         [OperationContract]
         List<string> GetAvailablePlayers(int playerId);
 
-        /// <summary>
-        /// </summary>
-        /// <param name="playerId"></param>
-        /// <param name="toPlayer"></param>
-        /// <param name="gameLayout"></param>
         /// <returns>Whether an invitation for <paramref name="toPlayer"/> was created.</returns>
         [OperationContract]
         bool SendInvitation(int playerId, string toPlayer, GameLayout gameLayout);
@@ -43,39 +34,30 @@ namespace Pairs.InterfaceLibrary
         bool? ReadInvitationReply(int playerId);
 
         [OperationContract]
-        bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout);
+        int[] GetScores(int playerId);
 
         [OperationContract]
-        int[] GetScores();
+        int GetPlayerOnTurn(int playerId);
 
         [OperationContract]
-        int GetRowCount();
+        int GetWinner(int playerId);
 
         [OperationContract]
-        int GetColumnCount();
+        bool GetMoveWasCompleted(int playerId);
 
         [OperationContract]
-        string GetPlayerOnTurn();
+        bool GetWasSuccessfulMove(int playerId);
 
         [OperationContract]
-        string GetWinner();
-
-        [OperationContract]
-        bool GetMoveWasCompleted();
-
-        [OperationContract]
-        bool GetWasSuccessfulMove();
-
-        [OperationContract]
-        bool IsEndOfGame();
+        bool IsEndOfGame(int playerId);
 
         [OperationContract]
         int NextMove(int playerId, int row, int column);
 
         [OperationContract]
-        bool IsPlayerOnTheTurn(int playerNumber);
+        bool IsPlayerOnTheTurn(int playerId, int playerNumber);
 
         [OperationContract]
-        List<OpponentsMove> ReadFromService(int playerId);
+        List<OpponentsMove> ReadOpponentsMoves(int playerId);
     }
 }

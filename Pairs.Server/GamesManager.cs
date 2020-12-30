@@ -16,7 +16,13 @@ namespace Pairs.Server
 
         internal PairsGame GetGame(int playerId)
         {
-            return _games.FirstOrDefault(x => x.FirstPlayer.Id == playerId || x.SecondPlayer.Id == playerId).Game;
+            return GetGameOfPlayers(playerId).Game;
         }
+
+        internal GameOfPlayers GetGameOfPlayers(int playerId)
+        {
+            return _games.FirstOrDefault(x => x.FirstPlayer.Id == playerId || x.SecondPlayer.Id == playerId);
+        }
+
     }
 }

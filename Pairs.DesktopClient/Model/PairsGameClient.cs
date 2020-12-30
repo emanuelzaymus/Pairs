@@ -38,11 +38,22 @@ namespace Pairs.DesktopClient.Model
 
         public delegate void PlayerOnTurnChangedEventHandler(string playerNick);
         public event PlayerOnTurnChangedEventHandler PlayerOnTurnChanged;
-        protected virtual void OnPlayerOnTurnChanged() => PlayerOnTurnChanged?.Invoke(_pairsGameService.GetPlayerOnTurn());
+        protected virtual void OnPlayerOnTurnChanged()
+        {
+            int playerOnTurn = _pairsGameService.GetPlayerOnTurn(_player.Id);
+            if (playerOnTurn == _player.Id)
+                PlayerOnTurnChanged?.Invoke(_player.Nick);
+            else
+                PlayerOnTurnChanged?.Invoke(_opponent);
+        }
 
         public delegate void ResultsEvaluatedEventHandler(string winner, int[] scores);
         public event ResultsEvaluatedEventHandler ResultsEvaluated;
-        protected virtual void OnResultsEvaluated() => ResultsEvaluated?.Invoke(_pairsGameService.GetWinner(), _pairsGameService.GetScores());
+        protected virtual void OnResultsEvaluated()
+        {
+            int winner = _pairsGameService.GetWinner(_player.Id);
+            ResultsEvaluated?.Invoke(winner == _player.Id ? _player.Nick : _opponent, _pairsGameService.GetScores(_player.Id));
+        }
 
         public delegate void OpponentsCardShownEventHandler(Card card);
         public event OpponentsCardShownEventHandler OpponentsCardShown;
@@ -186,12 +197,12 @@ namespace Pairs.DesktopClient.Model
             int cardNumber = _pairsGameService.NextMove(_player.Id, card.Row, card.Column);
             OnCardShown(card, cardNumber);
 
-            if (_pairsGameService.GetMoveWasCompleted())
+            if (_pairsGameService.GetMoveWasCompleted(_player.Id))
             {
-                if (_pairsGameService.GetWasSuccessfulMove())
+                if (_pairsGameService.GetWasSuccessfulMove(_player.Id))
                 {
                     OnFoundPairRemoved(_firstCard, card);
-                    if (_pairsGameService.IsEndOfGame())
+                    if (_pairsGameService.IsEndOfGame(_player.Id))
                     {
                         OnResultsEvaluated();
                         OnPlayerOnTurnChanged();
@@ -217,7 +228,7 @@ namespace Pairs.DesktopClient.Model
             while (true)
             {
                 await Wait();
-                var opponentMoves = _pairsGameService.ReadFromService(_player.Id);
+                var opponentMoves = _pairsGameService.ReadOpponentsMoves(_player.Id);
                 Trace.WriteLine(_player.Id + " === " + opponentMoves + " COUNT: " + opponentMoves.Count);
                 foreach (var move in opponentMoves)
                 {
@@ -228,7 +239,7 @@ namespace Pairs.DesktopClient.Model
                         if (move.IsSuccessful.Value)
                         {
                             OnOpponentsPairRemoved(firstOpponentCard, move.Card);
-                            if (_pairsGameService.IsEndOfGame())
+                            if (_pairsGameService.IsEndOfGame(_player.Id))
                             {
                                 OnResultsEvaluated();
                                 OnPlayerOnTurnChanged();
