@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="GamesManager.cs" />
     <Compile Include="PairsGameService.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="PlayersManager.cs" />
     <Compile Include="ServerProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

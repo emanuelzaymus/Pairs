@@ -12,8 +12,10 @@ using System.Threading.Tasks;
 namespace Pairs.Server
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    class PairsGameService : IPairsGameService
+    class PairsGameService : IPairsGameService, IDisposable
     {
+        private const string PlayerManagerFilePath = "PlayerManager.json";
+
         private PlayersManager _playersManager = new PlayersManager();
         private GamesManager _gamesManager = new GamesManager();
 
@@ -21,7 +23,12 @@ namespace Pairs.Server
 
         private List<OpponentsMove> _moveBuffer = new List<OpponentsMove>();
 
-        public Player TryToLogIn(string nick, string encryptedPassword)
+        public PairsGameService()
+        {
+            _playersManager = PlayersManager.FromJsonFile(PlayerManagerFilePath);
+        }
+
+        public int? TryToLogIn(string nick, string encryptedPassword)
         {
             return _playersManager.LogInPlayer(nick, encryptedPassword);
         }
@@ -137,6 +144,11 @@ namespace Pairs.Server
             List<OpponentsMove> moves = _moveBuffer.Select(x => x).ToList();
             _moveBuffer.Clear();
             return moves;
+        }
+
+        public void Dispose()
+        {
+            _playersManager.ToJsonFile(PlayerManagerFilePath);
         }
 
     }

@@ -7,8 +7,13 @@ namespace Pairs.InterfaceLibrary
     [ServiceContract]
     public interface IPairsGameService
     {
+        /// <summary>
+        /// </summary>
+        /// <param name="nick"></param>
+        /// <param name="encryptedPassword"></param>
+        /// <returns>Returns ID of logged in player.</returns>
         [OperationContract]
-        Player TryToLogIn(string nick, string encryptedPassword);
+        int? TryToLogIn(string nick, string encryptedPassword);
 
         [OperationContract]
         bool TryToSignIn(string nick, string encryptedPassword);

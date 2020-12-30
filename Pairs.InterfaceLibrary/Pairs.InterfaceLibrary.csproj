@@ -48,7 +48,6 @@
     <Compile Include="Response\Card.cs" />
     <Compile Include="GameLayout.cs" />
     <Compile Include="IPairsGameService.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

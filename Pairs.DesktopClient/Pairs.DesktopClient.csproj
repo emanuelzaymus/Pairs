@@ -58,6 +58,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\Encryption.cs" />
+    <Compile Include="Model\Player.cs" />
     <Compile Include="Presenter\NewGame.cs" />
     <Compile Include="Presenter\NewPlayerCredentials.cs" />
     <Compile Include="Presenter\PlayerCredentials.cs" />

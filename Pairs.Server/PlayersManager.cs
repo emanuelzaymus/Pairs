@@ -1,26 +1,58 @@
-﻿using Pairs.InterfaceLibrary;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 
 namespace Pairs.Server
 {
+    [DataContract]
     class PlayersManager
     {
+        [DataMember]
         private int _nextPlayerId = 1;
 
-        private List<Player> _players = new List<Player>() { new Player(55, "Emo", "ÒÚĄŋʐĴȥōɝ˄ʲǊŲŷˁȍǧłøɱŋʘÎǆĿŗĒʘůÁȱÉȨÏȦțʻʤÞȻŝÝʭȕĺēñȯʦ") }; // zzz
+        [DataMember]
+        private List<Player> _players = new List<Player>();
 
         public List<Player> OnlinePlayers => _players.Where(p => p.IsOnline).ToList();
 
-        internal Player LogInPlayer(string nick, string encryptedPassword)
+        internal static PlayersManager FromJsonFile(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                var serializer = new DataContractJsonSerializer(typeof(PlayersManager));
+                using (var stream = new FileStream(filePath, FileMode.Open))
+                {
+                    return (PlayersManager)serializer.ReadObject(stream);
+                }
+            }
+            else return new PlayersManager();
+        }
+
+        internal void ToJsonFile(string filePath)
+        {
+            var serializer = new DataContractJsonSerializer(typeof(PlayersManager));
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                serializer.WriteObject(stream, this);
+            }
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="nick"></param>
+        /// <param name="encryptedPassword"></param>
+        /// <returns>Returns ID of logged in player.</returns>
+        internal int? LogInPlayer(string nick, string encryptedPassword)
         {
             var player = GetPlayer(nick, encryptedPassword);
             if (player != null)
             {
                 player.IsOnline = true;
+                return player.Id;
             }
-            return player;
+            return null;
         }
 
         internal bool AddPlayer(string nick, string encryptedPassword)
