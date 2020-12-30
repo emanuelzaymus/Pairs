@@ -15,6 +15,11 @@ namespace Pairs.InterfaceLibrary
         public static GameLayout EightTimesSeven = new GameLayout(8, 7);
         public static GameLayout EightTimesEight = new GameLayout(8, 8);
 
+        public static GameLayout[] GetValues()
+        {
+            return new[] { ThreeTimesTwo, FourTimesThree, FourTimesFour, FiveTimesFour, SixTimesFive, SixTimesSix, SevenTimesSix, EightTimesSeven, EightTimesEight };
+        }
+
         [DataMember]
         public int ColumnCount { get; set; }
 
@@ -25,6 +30,11 @@ namespace Pairs.InterfaceLibrary
         {
             ColumnCount = columnCount;
             RowCount = rowCount;
+        }
+
+        public override string ToString()
+        {
+            return $"{ColumnCount} x {RowCount}";
         }
 
     }

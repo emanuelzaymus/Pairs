@@ -14,6 +14,9 @@ namespace Pairs.InterfaceLibrary
         bool TryToSignIn(string nick, string encryptedPassword);
 
         [OperationContract]
+        List<string> GetAvailablePlayers(int playerId);
+
+        [OperationContract]
         bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout);
 
         [OperationContract]

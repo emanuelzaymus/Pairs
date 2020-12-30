@@ -23,12 +23,17 @@ namespace Pairs.Server
 
         public Player TryToLogIn(string nick, string encryptedPassword)
         {
-            return _playersManager.GetPlayer(nick, encryptedPassword);
+            return _playersManager.LogInPlayer(nick, encryptedPassword);
         }
 
         public bool TryToSignIn(string nick, string encryptedPassword)
         {
             return _playersManager.AddPlayer(nick, encryptedPassword);
+        }
+
+        public List<string> GetAvailablePlayers(int playerId)
+        {
+            return _playersManager.OnlinePlayers.Where(p => p.Id != playerId).Select(p => p.Nick).ToList();
         }
 
         public bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout)

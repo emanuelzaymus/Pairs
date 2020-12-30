@@ -17,6 +17,8 @@ namespace Pairs.DesktopClient.Views
         public delegate void ShowSignInWindowEventHandler(LogInWindow logInWindow);
         private event ShowSignInWindowEventHandler ShowSignInWindow;
 
+        public bool ExitAppOnClose { get; set; } = true;
+
         public LogInWindow(LogInButtonClickedEventhandler logInEventHandler, ShowSignInWindowEventHandler showSignInWindowEventHandler)
         {
             InitializeComponent();
@@ -48,7 +50,10 @@ namespace Pairs.DesktopClient.Views
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            Application.Current.Shutdown();
+            if (ExitAppOnClose)
+            {
+                Application.Current.Shutdown();
+            }
         }
 
     }

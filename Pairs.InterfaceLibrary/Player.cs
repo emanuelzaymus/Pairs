@@ -13,6 +13,8 @@ namespace Pairs.InterfaceLibrary
 
         public string EncryptedPassword { get; }
 
+        public bool IsOnline { get; set; } = false;
+
         public Player(int playerId, string nick)
         {
             Id = playerId;

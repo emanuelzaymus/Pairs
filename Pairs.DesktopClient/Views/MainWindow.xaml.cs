@@ -53,7 +53,10 @@ namespace Pairs.DesktopClient.Views
         {
             bool success = _pairsGamePresenter.TryToLogIn(playerCredentials);
             if (success)
+            {
+                logInWindow.ExitAppOnClose = false;
                 logInWindow.Close();
+            }
             else
                 logInWindow.ShowUnsuccessMessage();
         }
@@ -69,7 +72,13 @@ namespace Pairs.DesktopClient.Views
             else signInWindow.ShowNickAlreadyExistsMessage();
         }
 
-        private void StartNewGameButton_Click(object sender, RoutedEventArgs e)
+        private void NewGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            var availablePlayers = _pairsGamePresenter.GetAvailablePlayers();
+            new NewGameWindow(availablePlayers).ShowDialog();
+        }
+
+        private void StartNewGame(NewGameWindow newGameWindow, NewGame newGame)
         {
             ClearGameBoard();
 

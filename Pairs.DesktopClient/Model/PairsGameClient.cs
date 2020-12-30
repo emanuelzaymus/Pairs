@@ -43,6 +43,7 @@ namespace Pairs.DesktopClient.Model
 
         public delegate void OpponentsCardShownEventHandler(Card card);
         public event OpponentsCardShownEventHandler OpponentsCardShown;
+
         protected virtual void OnOpponentsCardShown(Card card) => OpponentsCardShown?.Invoke(card);
 
         public delegate void OpponentsCardsHiddenEventHandler(Card card1, Card card2);
@@ -76,6 +77,13 @@ namespace Pairs.DesktopClient.Model
             bool success = _pairsGameService.TryToSignIn(nick, password);
             Trace.WriteLine(success ? "Sign in successfully." : "Signing in was not successful.");
             return success;
+        }
+
+        internal List<string> GetAvailablePlayers()
+        {
+            var ap = _pairsGameService.GetAvailablePlayers(_player.Id);
+            Trace.WriteLine("Available players: " + ap);
+            return ap;
         }
 
         internal bool StartNewGame()
