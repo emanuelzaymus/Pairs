@@ -73,7 +73,7 @@ namespace Pairs.Server
                 if (isAccepted)
                 {
                     // Create new game
-                    _gamesManager.Add(firstPlayer, secondPlayer, invitation.GameLayout);
+                    _gamesManager.AddGame(firstPlayer, secondPlayer, invitation.GameLayout);
                     // Create invitation reply for invitation.FromPlayer
                     return invitation.GameLayout;
                 }
@@ -116,9 +116,9 @@ namespace Pairs.Server
             return _gamesManager.GetGame(playerId).IsEndOfGame();
         }
 
-        public bool IsPlayerOnTheTurn(int playerId, int playerNumber)
+        public bool IsPlayerOnTheTurn(int playerId)
         {
-            return _gamesManager.GetGame(playerId).IsPlayerOnTheTurn(playerNumber);
+            return _gamesManager.GetGame(playerId).IsPlayerOnTheTurn(playerId);
         }
 
         public int NextMove(int playerId, int row, int column)
@@ -145,10 +145,14 @@ namespace Pairs.Server
             return _gamesManager.GetGameOfPlayers(playerId).PopAllOpponentsMove();
         }
 
+        public void EndGame(int playerId)
+        {
+            _gamesManager.RemoveGame(playerId);
+        }
+
         public void Dispose()
         {
             _playersManager.ToJsonFile(PlayerManagerFilePath);
         }
-
     }
 }

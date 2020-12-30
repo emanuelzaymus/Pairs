@@ -87,21 +87,6 @@ namespace Pairs.DesktopClient.Presenter
             OnAcceptedGameStarted(opponent, gameLayout);
         }
 
-        //internal bool StartNewGame()
-        //{
-        //    return _pairsGameClient.StartNewGame();
-        //}
-
-        //internal int GetRowCount()
-        //{
-        //    return _pairsGameClient.GetRowCount();
-        //}
-
-        //internal int GetColumnCount()
-        //{
-        //    return _pairsGameClient.GetColumnCount();
-        //}
-
         internal void NextMove(ICard card)
         {
             _pairsGameClient.NextMove(card);

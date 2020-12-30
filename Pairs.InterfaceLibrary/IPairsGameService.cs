@@ -55,9 +55,12 @@ namespace Pairs.InterfaceLibrary
         int NextMove(int playerId, int row, int column);
 
         [OperationContract]
-        bool IsPlayerOnTheTurn(int playerId, int playerNumber);
+        bool IsPlayerOnTheTurn(int playerId);
 
         [OperationContract]
         List<OpponentsMove> ReadOpponentsMoves(int playerId);
+
+        [OperationContract]
+        void EndGame(int playerId);
     }
 }

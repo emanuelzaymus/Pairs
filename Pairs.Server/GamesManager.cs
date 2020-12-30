@@ -1,5 +1,6 @@
 ﻿using Pairs.Core;
 using Pairs.InterfaceLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +10,7 @@ namespace Pairs.Server
     {
         private readonly List<GameOfPlayers> _games = new List<GameOfPlayers>();
 
-        internal void Add(Player firstPlayer, Player secondPlayer, GameLayout gameLayout)
+        internal void AddGame(Player firstPlayer, Player secondPlayer, GameLayout gameLayout)
         {
             _games.Add(new GameOfPlayers(firstPlayer, secondPlayer, gameLayout));
         }
@@ -24,5 +25,9 @@ namespace Pairs.Server
             return _games.FirstOrDefault(x => x.FirstPlayer.Id == playerId || x.SecondPlayer.Id == playerId);
         }
 
+        internal void RemoveGame(int playerId)
+        {
+            _games.RemoveAll(x => x.FirstPlayer.Id == playerId || x.SecondPlayer.Id == playerId);
+        }
     }
 }

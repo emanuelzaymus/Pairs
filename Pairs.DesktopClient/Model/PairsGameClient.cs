@@ -149,6 +149,7 @@ namespace Pairs.DesktopClient.Model
                 {
                     _opponent = fromPlayer;
                     _gameLayout = gameLayout;
+                    ReadOpponentsMovesAsync();
                     OnInvitationAccepted();
                     return;
                 }
@@ -175,36 +176,38 @@ namespace Pairs.DesktopClient.Model
 
         internal void NextMove(ICard card)
         {
-            // TODO: do not allow make a move when its mot my turn
-            int cardNumber = _pairsGameService.NextMove(_player.Id, card.Row, card.Column);
-            OnCardShown(card, cardNumber);
-
-            if (_pairsGameService.GetMoveWasCompleted(_player.Id))
+            if (_pairsGameService.IsPlayerOnTheTurn(_player.Id))
             {
-                if (_pairsGameService.GetWasSuccessfulMove(_player.Id))
+                int cardNumber = _pairsGameService.NextMove(_player.Id, card.Row, card.Column);
+                OnCardShown(card, cardNumber);
+
+                if (_pairsGameService.GetMoveWasCompleted(_player.Id))
                 {
-                    OnFoundPairRemoved(_firstCard, card);
-                    if (_pairsGameService.IsEndOfGame(_player.Id))
+                    if (_pairsGameService.GetWasSuccessfulMove(_player.Id))
                     {
-                        OnResultsEvaluated();
+                        OnFoundPairRemoved(_firstCard, card);
+                        if (_pairsGameService.IsEndOfGame(_player.Id))
+                        {
+                            OnResultsEvaluated();
+                            OnPlayerOnTurnChanged();
+                            _pairsGameService.EndGame(_player.Id);
+                        }
+                    }
+                    else
+                    {
                         OnPlayerOnTurnChanged();
+                        OnCardsHidden(_firstCard, card);
+                        ReadOpponentsMovesAsync();
                     }
                 }
                 else
                 {
-                    OnPlayerOnTurnChanged();
-                    OnCardsHidden(_firstCard, card);
-                    ReadFromServiceAsync();
+                    _firstCard = card;
                 }
-            }
-            else
-            {
-                _firstCard = card;
             }
         }
 
-        // TODO: add cancelation token - when I close the app to and this taks in the Dispose() method
-        private async void ReadFromServiceAsync()
+        private async void ReadOpponentsMovesAsync()
         {
             Card firstOpponentCard = null;
             while (true)

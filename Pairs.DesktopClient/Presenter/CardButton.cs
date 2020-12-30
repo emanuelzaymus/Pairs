@@ -9,6 +9,7 @@ namespace Pairs.DesktopClient.Presenter
         private const char _cardBackFace = '#';
 
         public int Row { get; }
+
         public int Column { get; }
 
         public CardButton(int row, int column)
@@ -17,6 +18,7 @@ namespace Pairs.DesktopClient.Presenter
             Column = column;
             Hide();
             Margin = new Thickness(5);
+            FontSize = 30;
         }
 
         public void Show(object cardFrontFace)
