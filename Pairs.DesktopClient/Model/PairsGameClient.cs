@@ -1,15 +1,11 @@
-﻿using Pairs.DesktopClient.Presenter;
-using Pairs.InterfaceLibrary;
+﻿using Pairs.InterfaceLibrary;
 using Pairs.InterfaceLibrary.Response;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace Pairs.DesktopClient.Model
 {
@@ -129,30 +125,34 @@ namespace Pairs.DesktopClient.Model
             return success;
         }
 
+        // TODO: run again after end of the game
         private async void ReadInvitationsAsync()
         {
-            string fromPlayer = null;
-            await Task.Run(() =>
+            while (true)
             {
-                while (_pairsGameService != null)
+                string fromPlayer = null;
+                await Task.Run(() =>
                 {
-                    fromPlayer = _pairsGameService.ReceiveInvitation(_player.Id);
-                    if (fromPlayer != null)
+                    while (_pairsGameService != null)
                     {
-                        break;
+                        fromPlayer = _pairsGameService.ReceiveInvitation(_player.Id);
+                        if (fromPlayer != null)
+                        {
+                            break;
+                        }
+                        Thread.Sleep(1000);
                     }
-                    Thread.Sleep(1000);
+                });
+                bool accepted = OnInvitationReceived(fromPlayer);
+                var gameLayout = _pairsGameService.AcceptInvitation(_player.Id, fromPlayer, accepted);
+                if (accepted)
+                {
+                    _opponent = fromPlayer;
+                    _gameLayout = gameLayout;
+                    OnInvitationAccepted();
+                    return;
                 }
-            });
-            bool accepted = OnInvitationReceived(fromPlayer);
-            var gameLayout = _pairsGameService.AcceptInvitation(_player.Id, fromPlayer, accepted);
-            if (accepted)
-            {
-                _opponent = fromPlayer;
-                _gameLayout = gameLayout;
-                OnInvitationAccepted();
             }
-            else ReadInvitationsAsync();
         }
 
         private async void ReadInvitaionReplyAsync()
@@ -172,24 +172,6 @@ namespace Pairs.DesktopClient.Model
             });
             OnInvitationReplyReceived(accepted.Value);
         }
-
-        //internal bool StartNewGame()
-        //{
-        //    _gameLayout = GameLayout.ThreeTimesTwo;
-        //    bool res = _pairsGameService.StartNewGame(_player.Id, 2, _gameLayout);
-        //    OnPlayerOnTurnChanged();
-        //    return res;
-        //}
-
-        //internal int GetRowCount()
-        //{
-        //    return _pairsGameService.GetRowCount();
-        //}
-
-        //internal int GetColumnCount()
-        //{
-        //    return _pairsGameService.GetColumnCount();
-        //}
 
         internal void NextMove(ICard card)
         {

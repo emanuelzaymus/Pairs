@@ -9,9 +9,9 @@ namespace Pairs.Server
     {
         private readonly List<GameOfPlayers> _games = new List<GameOfPlayers>();
 
-        internal void Add(Player firstPlayer, Player SecondPlayer, GameLayout gameLayout)
+        internal void Add(Player firstPlayer, Player secondPlayer, GameLayout gameLayout)
         {
-            _games.Add(new GameOfPlayers(firstPlayer, SecondPlayer, gameLayout));
+            _games.Add(new GameOfPlayers(firstPlayer, secondPlayer, gameLayout));
         }
 
         internal PairsGame GetGame(int playerId)

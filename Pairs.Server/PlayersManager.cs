@@ -13,7 +13,7 @@ namespace Pairs.Server
         private int _nextPlayerId = 1;
 
         [DataMember]
-        private List<Player> _players = new List<Player>();
+        private readonly List<Player> _players = new List<Player>();
 
         public List<Player> OnlinePlayers => _players.Where(p => p.IsOnline).ToList();
 

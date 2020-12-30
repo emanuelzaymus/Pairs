@@ -6,11 +6,11 @@ namespace Pairs.Server
 {
     class InvitationsManager
     {
-        private PlayersManager _playersManager;
+        private readonly PlayersManager _playersManager;
 
-        private List<Invitation> _invitations = new List<Invitation>();
+        private readonly List<Invitation> _invitations = new List<Invitation>();
 
-        private List<InvitationReply> _invitationReplies = new List<InvitationReply>();
+        private readonly List<InvitationReply> _invitationReplies = new List<InvitationReply>();
 
         public InvitationsManager(PlayersManager playersManager)
         {
@@ -20,6 +20,7 @@ namespace Pairs.Server
         internal bool AddInvitation(int playerId, string toPlayerNick, GameLayout gameLayout)
         {
             Player fromPlayer = _playersManager.GetPlayer(playerId);
+            fromPlayer.IsPlaying = true;
             Player toPlayer = _playersManager.GetPlayer(toPlayerNick);
             if (toPlayer.IsOnline && !toPlayer.IsPlaying)
             {

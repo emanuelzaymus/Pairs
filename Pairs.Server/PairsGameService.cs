@@ -13,9 +13,9 @@ namespace Pairs.Server
     {
         private const string PlayerManagerFilePath = "PlayerManager.json";
 
-        private PlayersManager _playersManager;
-        private InvitationsManager _invitationsManager;
-        private GamesManager _gamesManager = new GamesManager();
+        private readonly PlayersManager _playersManager;
+        private readonly InvitationsManager _invitationsManager;
+        private readonly GamesManager _gamesManager = new GamesManager();
 
         public PairsGameService()
         {
@@ -61,13 +61,22 @@ namespace Pairs.Server
         public GameLayout AcceptInvitation(int playerId, string fromPlayer, bool isAccepted)
         {
             Invitation invitation = _invitationsManager.PopInvitationFor(playerId);
-            if (isAccepted && invitation != null)
+            if (invitation != null)
             {
-                // Create new game
-                _gamesManager.Add(_playersManager.GetPlayer(fromPlayer), _playersManager.GetPlayer(playerId), invitation.GameLayout);
-                // Create invitation reply for invitation.FromPlayer
                 _invitationsManager.AddInvitationReply(invitation, isAccepted);
-                return invitation.GameLayout;
+
+                Player firstPlayer = _playersManager.GetPlayer(fromPlayer);
+                Player secondPlayer = _playersManager.GetPlayer(playerId);
+                firstPlayer.IsPlaying = isAccepted;
+                secondPlayer.IsPlaying = isAccepted;
+
+                if (isAccepted)
+                {
+                    // Create new game
+                    _gamesManager.Add(firstPlayer, secondPlayer, invitation.GameLayout);
+                    // Create invitation reply for invitation.FromPlayer
+                    return invitation.GameLayout;
+                }
             }
             return null;
         }
