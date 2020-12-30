@@ -1,5 +1,6 @@
 ﻿using Pairs.DesktopClient.Presenter;
 using Pairs.InterfaceLibrary;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,8 @@ namespace Pairs.DesktopClient.Views
             _pairsGamePresenter.InvitationReceived += ReceiveInvitation;
             _pairsGamePresenter.InvitationReplyReceived += ReceiveInvitationReply;
             _pairsGamePresenter.AcceptedGameStarted += StartNewGame;
+
+            _pairsGamePresenter.ScoreAdded += AddPoint;
 
             ShowLogInWindow();
         }
@@ -105,6 +108,14 @@ namespace Pairs.DesktopClient.Views
             ClearGameBoard();
             SetNewGameBoard(gameLayout.RowCount, gameLayout.ColumnCount);
             OpponentLabel.Content = opponent;
+        }
+
+        private void AddPoint(bool forMe)
+        {
+            if (forMe)
+                YourScoreLabel.Content = (int)YourScoreLabel.Content + 1;
+            else
+                OpponentScoreLabel.Content = (int)OpponentScoreLabel.Content + 1;
         }
 
         private void ClearGameBoard()

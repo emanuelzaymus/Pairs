@@ -32,6 +32,10 @@ namespace Pairs.DesktopClient.Presenter
         public event AcceptedGameStartedEventHandler AcceptedGameStarted;
         protected virtual void OnAcceptedGameStarted(string opponent, GameLayout gameLayout) => AcceptedGameStarted(opponent, gameLayout);
 
+        public delegate void ScoreAddedEventHandler(bool forMe);
+        public event ScoreAddedEventHandler ScoreAdded;
+        protected virtual void OnScoreAdded(bool forMe) => ScoreAdded?.Invoke(forMe);
+
         public delegate ICard GetCardHandler(int row, int column);
         public GetCardHandler GetCard;
 
@@ -50,6 +54,8 @@ namespace Pairs.DesktopClient.Presenter
             _pairsGameClient.InvitationReceived += ReceiveInvitation;
             _pairsGameClient.InvitationReplyReceived += ReceiveInvitationReply;
             _pairsGameClient.InvitationAccepted += StartAcceptedGame;
+
+            _pairsGameClient.ScoreAdded += OnScoreAdded;
         }
 
         internal bool TryToLogIn(PlayerCredentials playerCredentials)
@@ -143,6 +149,7 @@ namespace Pairs.DesktopClient.Presenter
             ICard c1 = GetCard(card1.Row, card1.Column);
             ICard c2 = GetCard(card2.Row, card2.Column);
             RemoveFoundPairAsync(c1, c2);
+
         }
 
         private async Task Wait()

@@ -76,6 +76,10 @@ namespace Pairs.DesktopClient.Model
         public event InvitationAcceptedEventHandler InvitationAccepted;
         protected virtual void OnInvitationAccepted() => InvitationAccepted?.Invoke(_opponent, _gameLayout);
 
+        public delegate void ScoreAddedEventHandler(bool forMe);
+        public event ScoreAddedEventHandler ScoreAdded;
+        protected virtual void OnScoreAdded(bool forMe) => ScoreAdded?.Invoke(forMe);
+
         public PairsGameClient()
         {
             _channelFactory = new ChannelFactory<IPairsGameService>("PairsGameEndpoint");
@@ -186,11 +190,11 @@ namespace Pairs.DesktopClient.Model
                     if (_pairsGameService.GetWasSuccessfulMove(_player.Id))
                     {
                         OnFoundPairRemoved(_firstCard, card);
+                        OnScoreAdded(true);
                         if (_pairsGameService.IsEndOfGame(_player.Id))
                         {
                             OnResultsEvaluated();
                             OnPlayerOnTurnChanged();
-                            _pairsGameService.EndGame(_player.Id);
                         }
                     }
                     else
@@ -224,10 +228,12 @@ namespace Pairs.DesktopClient.Model
                         if (move.IsSuccessful.Value)
                         {
                             OnOpponentsPairRemoved(firstOpponentCard, move.Card);
+                            OnScoreAdded(false);
                             if (_pairsGameService.IsEndOfGame(_player.Id))
                             {
                                 OnResultsEvaluated();
                                 OnPlayerOnTurnChanged();
+                                _pairsGameService.EndGame(_player.Id);
                                 return;
                             }
                         }
