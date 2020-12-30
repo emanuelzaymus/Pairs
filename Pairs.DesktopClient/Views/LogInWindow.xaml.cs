@@ -1,4 +1,5 @@
 ﻿using Pairs.DesktopClient.Presenter;
+using System;
 using System.Windows;
 
 namespace Pairs.DesktopClient.Views
@@ -42,6 +43,12 @@ namespace Pairs.DesktopClient.Views
         internal void ShowUnsuccessMessage()
         {
             WrongCredentialsLabel.Visibility = Visibility.Visible;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            Application.Current.Shutdown();
         }
 
     }
