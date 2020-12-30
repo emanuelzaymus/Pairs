@@ -16,6 +16,8 @@ namespace Pairs.Server
 
         public bool IsOnline { get; set; } = false;
 
+        public bool IsPlaying { get; set; } = false;
+
         public Player(int id, string nick, string encryptedPassword)
         {
             Id = id;

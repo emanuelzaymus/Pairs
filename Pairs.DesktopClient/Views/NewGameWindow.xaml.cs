@@ -22,23 +22,28 @@ namespace Pairs.DesktopClient.Views
     /// </summary>
     public partial class NewGameWindow : Window
     {
-        private NewGame NewGame { get; } = new NewGame();
+        private NewGameData NewGameData { get; } = new NewGameData();
 
-        public NewGameWindow(List<string> players)
+        internal delegate void SendInvitationButtonClickedEventhandler(NewGameData newGameData);
+        private event SendInvitationButtonClickedEventhandler SendInvitationButtonClicked;
+
+        internal NewGameWindow(List<string> players, SendInvitationButtonClickedEventhandler sendInvitationEventhandler)
         {
             InitializeComponent();
-            DataContext = NewGame;
+            DataContext = NewGameData;
             GameLayoutsComboBox.ItemsSource = GameLayout.GetValues();
             PlayersComboBox.ItemsSource = players;
+            SendInvitationButtonClicked = sendInvitationEventhandler;
         }
 
         private void SendInvitation_Click(object sender, RoutedEventArgs e)
         {
-            if (!NewGame.Valid)
+            if (NewGameData.Valid)
             {
-                ShowAlertMessage();
+                Close();
+                SendInvitationButtonClicked(NewGameData);
             }
-            Trace.WriteLine($"{NewGame.GameLayout}  {NewGame.WithPlayer}");
+            else ShowAlertMessage();
         }
 
         private void ShowAlertMessage()

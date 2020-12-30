@@ -7,7 +7,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Pairs.DesktopClient.Model
 {
@@ -17,6 +19,7 @@ namespace Pairs.DesktopClient.Model
         private readonly IPairsGameService _pairsGameService;
 
         private Player _player;
+        private string _opponent;
         private GameLayout _gameLayout;
 
         private ICard _firstCard;
@@ -53,6 +56,19 @@ namespace Pairs.DesktopClient.Model
         public event OpponentsPairRemovedEventHandler OpponentsPairRemoved;
         protected virtual void OnOpponentsPairRemoved(Card card1, Card card2) => OpponentsPairRemoved?.Invoke(card1, card2);
 
+        public delegate bool InvitationReceivedEventHandler(string fromPlayer);
+        public event InvitationReceivedEventHandler InvitationReceived;
+        protected virtual bool OnInvitationReceived(string fromPlayer) => InvitationReceived(fromPlayer);
+
+        public delegate void InvitationReplyReceivedEventHandler(bool isAccepted, string opponent, GameLayout gameLayout);
+        public event InvitationReplyReceivedEventHandler InvitationReplyReceived;
+        protected virtual void OnInvitationReplyReceived(bool isAccepted)
+            => InvitationReplyReceived?.Invoke(isAccepted, _opponent, _gameLayout);
+
+        public delegate void InvitationAcceptedEventHandler(string opponent, GameLayout gameLayout);
+        public event InvitationAcceptedEventHandler InvitationAccepted;
+        protected virtual void OnInvitationAccepted() => InvitationAccepted?.Invoke(_opponent, _gameLayout);
+
         public PairsGameClient()
         {
             _channelFactory = new ChannelFactory<IPairsGameService>("PairsGameEndpoint");
@@ -69,6 +85,7 @@ namespace Pairs.DesktopClient.Model
             if (playerId.HasValue)
             {
                 _player = new Player(playerId.Value, nick);
+                ReadInvitationsAsync();
             }
             Trace.WriteLine(playerId.HasValue ? $"Logged in successfully. Id: {_player.Id}" : "Logging in was not successful.");
             return playerId.HasValue;
@@ -89,23 +106,79 @@ namespace Pairs.DesktopClient.Model
             return ap;
         }
 
-        internal bool StartNewGame()
+        internal bool SendInvitation(GameLayout gameLayout, string toPlayer)
         {
-            _gameLayout = GameLayout.ThreeTimesTwo;
-            bool res = _pairsGameService.StartNewGame(_player.Id, 2, _gameLayout);
-            OnPlayerOnTurnChanged();
-            return res;
+            _opponent = toPlayer;
+            _gameLayout = gameLayout;
+            bool success = _pairsGameService.SendInvitation(_player.Id, toPlayer, gameLayout);
+            if (success)
+            {
+                ReadInvitaionReplyAsync();
+            }
+            return success;
         }
 
-        internal int GetRowCount()
+        private async void ReadInvitationsAsync()
         {
-            return _pairsGameService.GetRowCount();
+            string fromPlayer = null;
+            await Task.Run(() =>
+            {
+                while (_pairsGameService != null)
+                {
+                    fromPlayer = _pairsGameService.ReceiveInvitation(_player.Id);
+                    if (fromPlayer != null)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(1000);
+                }
+            });
+            bool accepted = OnInvitationReceived(fromPlayer);
+            var gameLayout = _pairsGameService.AcceptInvitation(_player.Id, fromPlayer, accepted);
+            if (accepted)
+            {
+                _opponent = fromPlayer;
+                _gameLayout = gameLayout;
+                OnInvitationAccepted();
+            }
+            else ReadInvitationsAsync();
         }
 
-        internal int GetColumnCount()
+        private async void ReadInvitaionReplyAsync()
         {
-            return _pairsGameService.GetColumnCount();
+            bool? accepted = null;
+            await Task.Run(() =>
+            {
+                while (_pairsGameService != null)
+                {
+                    accepted = _pairsGameService.ReadInvitationReply(_player.Id);
+                    if (accepted != null)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(1000);
+                }
+            });
+            OnInvitationReplyReceived(accepted.Value);
         }
+
+        //internal bool StartNewGame()
+        //{
+        //    _gameLayout = GameLayout.ThreeTimesTwo;
+        //    bool res = _pairsGameService.StartNewGame(_player.Id, 2, _gameLayout);
+        //    OnPlayerOnTurnChanged();
+        //    return res;
+        //}
+
+        //internal int GetRowCount()
+        //{
+        //    return _pairsGameService.GetRowCount();
+        //}
+
+        //internal int GetColumnCount()
+        //{
+        //    return _pairsGameService.GetColumnCount();
+        //}
 
         internal void NextMove(ICard card)
         {

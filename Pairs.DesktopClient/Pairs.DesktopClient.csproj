@@ -59,11 +59,14 @@
     </ApplicationDefinition>
     <Compile Include="Model\Encryption.cs" />
     <Compile Include="Model\Player.cs" />
-    <Compile Include="Presenter\NewGame.cs" />
+    <Compile Include="Presenter\NewGameData.cs" />
     <Compile Include="Presenter\NewPlayerCredentials.cs" />
     <Compile Include="Presenter\PlayerCredentials.cs" />
     <Compile Include="Views\LogInWindow.xaml.cs">
       <DependentUpon>LogInWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MessageWindow.xaml.cs">
+      <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewGameWindow.xaml.cs">
       <DependentUpon>NewGameWindow.xaml</DependentUpon>
@@ -85,6 +88,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\LogInWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MessageWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

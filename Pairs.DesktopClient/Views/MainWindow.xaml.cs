@@ -1,4 +1,5 @@
 ﻿using Pairs.DesktopClient.Presenter;
+using Pairs.InterfaceLibrary;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,8 @@ namespace Pairs.DesktopClient.Views
     {
         private readonly PairsGamePresenter _pairsGamePresenter = new PairsGamePresenter();
 
+        private MessageWindow _messageWindow;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -20,6 +23,10 @@ namespace Pairs.DesktopClient.Views
             _pairsGamePresenter.PlayerOnTurnUpdated += UpdatePlayerOnTurn;
 
             _pairsGamePresenter.GetCard = GetCard;
+
+            _pairsGamePresenter.InvitationReceived += ReceiveInvitation;
+            _pairsGamePresenter.InvitationReplyReceived += ReceiveInvitationReply;
+            _pairsGamePresenter.AcceptedGameStarted += StartNewGame;
 
             ShowLogInWindow();
         }
@@ -41,9 +48,9 @@ namespace Pairs.DesktopClient.Views
             {
                 logInWindow.ExitAppOnClose = false;
                 logInWindow.Close();
+                YourNickLabel.Content = playerCredentials.Nick;
             }
-            else
-                logInWindow.ShowUnsuccessMessage();
+            else logInWindow.ShowUnsuccessMessage();
         }
 
         private void SignIn(SignInWindow signInWindow, LogInWindow logInWindow, PlayerCredentials playerCredentials)
@@ -60,18 +67,54 @@ namespace Pairs.DesktopClient.Views
         private void NewGameButton_Click(object sender, RoutedEventArgs e)
         {
             var availablePlayers = _pairsGamePresenter.GetAvailablePlayers();
-            new NewGameWindow(availablePlayers) { Owner = this }.ShowDialog();
+            new NewGameWindow(availablePlayers, SendInvitation) { Owner = this }.ShowDialog();
         }
 
-        private void StartNewGame(NewGameWindow newGameWindow, NewGame newGame)
+        private void SendInvitation(NewGameData newGameData)
+        {
+            bool succes = _pairsGamePresenter.SendInvitation(newGameData);
+            if (succes)
+                ShowMessageWindow("Wait for the game to start...", "Invitation sent");
+            else
+                MessageBox.Show(this, $"Player {newGameData.WithPlayer} is busy now. Try again later.", "Player busy", MessageBoxButton.OK);
+        }
+
+        private void ShowMessageWindow(string message, string title)
+        {
+            _messageWindow = new MessageWindow(message, title) { Owner = this };
+            _messageWindow.ShowDialog();
+        }
+
+        private bool ReceiveInvitation(string fromPlayer)
+        {
+            var messageBoxResult = MessageBox.Show(this, $"You are invited for a game by player {fromPlayer}. Accept?.", "Game Invitation", MessageBoxButton.YesNo);
+            return messageBoxResult == MessageBoxResult.Yes;
+        }
+
+        private void ReceiveInvitationReply(bool isAccepted, string opponent, GameLayout gameLayout)
+        {
+            _messageWindow.Close();
+            if (isAccepted)
+                StartNewGame(opponent, gameLayout);
+            else
+                MessageBox.Show(this, $"Your invitation was denied.", "Invitation Reply", MessageBoxButton.OK);
+        }
+
+        private void StartNewGame(string opponent, GameLayout gameLayout)
         {
             ClearGameBoard();
+            SetNewGameBoard(gameLayout.RowCount, gameLayout.ColumnCount);
+            OpponentLabel.Content = opponent;
+        }
 
-            _pairsGamePresenter.StartNewGame();
+        private void ClearGameBoard()
+        {
+            PairGrid.Children.Clear();
+            PairGrid.RowDefinitions.Clear();
+            PairGrid.ColumnDefinitions.Clear();
 
-            int rowCount = _pairsGamePresenter.GetRowCount();
-            int columnCount = _pairsGamePresenter.GetColumnCount();
-            SetNewGameBoard(rowCount, columnCount);
+            YourScoreLabel.Content = 0;
+            OpponentScoreLabel.Content = 0;
         }
 
         private void SetNewGameBoard(int rowCount, int columnCount)
@@ -93,16 +136,6 @@ namespace Pairs.DesktopClient.Views
                 PairGrid.Children.Add(card);
                 card.Click += CardButton_Click;
             }
-        }
-
-        private void ClearGameBoard()
-        {
-            PairGrid.Children.Clear();
-            PairGrid.RowDefinitions.Clear();
-            PairGrid.ColumnDefinitions.Clear();
-
-            ShowMessage(null);
-            UpdatePlayerOnTurn(null);
         }
 
         private void CardButton_Click(object sender, RoutedEventArgs e)

@@ -16,7 +16,8 @@ namespace Pairs.Server
     {
         private const string PlayerManagerFilePath = "PlayerManager.json";
 
-        private PlayersManager _playersManager = new PlayersManager();
+        private PlayersManager _playersManager;
+        private InvitationsManager _invitationsManager;
         private GamesManager _gamesManager = new GamesManager();
 
         private PairsGame _game;
@@ -26,6 +27,7 @@ namespace Pairs.Server
         public PairsGameService()
         {
             _playersManager = PlayersManager.FromJsonFile(PlayerManagerFilePath);
+            _invitationsManager = new InvitationsManager(_playersManager);
         }
 
         public int? TryToLogIn(string nick, string encryptedPassword)
@@ -48,10 +50,45 @@ namespace Pairs.Server
             return _playersManager.OnlinePlayers.Where(p => p.Id != playerId).Select(p => p.Nick).ToList();
         }
 
+        public bool SendInvitation(int playerId, string toPlayer, GameLayout gameLayout)
+        {
+            return _invitationsManager.AddInvitation(playerId, toPlayer, gameLayout);
+        }
+
+        public string ReceiveInvitation(int playerId)
+        {
+            Invitation invitation = _invitationsManager.GetInvitationFor(playerId);
+            if (invitation != null)
+            {
+                return invitation.FromPlayer.Nick;
+            }
+            return null;
+        }
+
+        public GameLayout AcceptInvitation(int playerId, string fromPlayer, bool isAccepted)
+        {
+            Invitation invitation = _invitationsManager.PopInvitationFor(playerId);
+            if (isAccepted && invitation != null)
+            {
+                // Create new game
+                _gamesManager.Add(_playersManager.GetPlayer(fromPlayer), _playersManager.GetPlayer(playerId), invitation.GameLayout);
+                // Create invitation reply for invitation.FromPlayer
+                _invitationsManager.AddInvitationReply(invitation, isAccepted);
+                return invitation.GameLayout;
+            }
+            return null;
+        }
+
+        public bool? ReadInvitationReply(int playerId)
+        {
+            return _invitationsManager.GetInvitationReply(playerId);
+        }
+
         public bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout)
         {
             // TODO: discover whether withPlayerId player is available (logged in and is not playing)
             // start new game 
+            // TODO: set Player.IsPlaying to true
             _game = new PairsGame(gameLayout, playerId, withPlayerId);
             return true;
         }

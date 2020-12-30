@@ -76,14 +76,19 @@ namespace Pairs.Server
             return false;
         }
 
+        public Player GetPlayer(int playerId)
+        {
+            return _players.FirstOrDefault(p => p.Id == playerId);
+        }
+
+        public Player GetPlayer(string nick)
+        {
+            return _players.FirstOrDefault(p => p.Nick == nick);
+        }
+
         private Player GetPlayer(string nick, string encryptedPassword)
         {
             return _players.FirstOrDefault(p => p.Nick == nick && p.EncryptedPassword == encryptedPassword);
-        }
-
-        private Player GetPlayer(int playerId)
-        {
-            return _players.FirstOrDefault(p => p.Id == playerId);
         }
 
     }

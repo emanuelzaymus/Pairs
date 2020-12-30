@@ -1,4 +1,5 @@
 ﻿using Pairs.DesktopClient.Model;
+using Pairs.InterfaceLibrary;
 using Pairs.InterfaceLibrary.Response;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,19 @@ namespace Pairs.DesktopClient.Presenter
         public event PlayerOnTurnUpdatedEventHandler PlayerOnTurnUpdated;
         protected virtual void OnPlayerOnTurnUpdated(string playerOnTurn) => PlayerOnTurnUpdated?.Invoke(playerOnTurn);
 
+        public delegate bool InvitationReceivedEventHandler(string fromPlayer);
+        public event InvitationReceivedEventHandler InvitationReceived;
+        protected virtual bool OnInvitationReceived(string fromPlayer) => InvitationReceived(fromPlayer);
+
+        public delegate void InvitationReplyReceivedEventHandler(bool isAccepted, string opponent, GameLayout gameLayout);
+        public event InvitationReplyReceivedEventHandler InvitationReplyReceived;
+        protected virtual void OnInvitationReplyReceived(bool isAccepted, string opponent, GameLayout gameLayout)
+            => InvitationReplyReceived(isAccepted, opponent, gameLayout);
+
+        public delegate void AcceptedGameStartedEventHandler(string opponent, GameLayout gameLayout);
+        public event AcceptedGameStartedEventHandler AcceptedGameStarted;
+        protected virtual void OnAcceptedGameStarted(string opponent, GameLayout gameLayout) => AcceptedGameStarted(opponent, gameLayout);
+
         public delegate ICard GetCardHandler(int row, int column);
         public GetCardHandler GetCard;
 
@@ -34,6 +48,10 @@ namespace Pairs.DesktopClient.Presenter
             _pairsGameClient.OpponentsCardShown += ShowOpponentsCard;
             _pairsGameClient.OpponentsCardsHidden += HideOpponentsCards;
             _pairsGameClient.OpponentsPairRemoved += RemoveOpponentsPair;
+
+            _pairsGameClient.InvitationReceived += ReceiveInvitation;
+            _pairsGameClient.InvitationReplyReceived += ReceiveInvitationReply;
+            _pairsGameClient.InvitationAccepted += StartAcceptedGame;
         }
 
         internal bool TryToLogIn(PlayerCredentials playerCredentials)
@@ -51,20 +69,40 @@ namespace Pairs.DesktopClient.Presenter
             return _pairsGameClient.GetAvailablePlayers();
         }
 
-        internal bool StartNewGame()
+        internal bool SendInvitation(NewGameData newGameData)
         {
-            return _pairsGameClient.StartNewGame();
+            return _pairsGameClient.SendInvitation(newGameData.GameLayout, newGameData.WithPlayer);
         }
 
-        internal int GetRowCount()
+        private bool ReceiveInvitation(string fromPlayer)
         {
-            return _pairsGameClient.GetRowCount();
+            return OnInvitationReceived(fromPlayer);
         }
 
-        internal int GetColumnCount()
+        private void ReceiveInvitationReply(bool isAccepted, string opponent, GameLayout gameLayout)
         {
-            return _pairsGameClient.GetColumnCount();
+            OnInvitationReplyReceived(isAccepted, opponent, gameLayout);
         }
+
+        private void StartAcceptedGame(string opponent, GameLayout gameLayout)
+        {
+            OnAcceptedGameStarted(opponent, gameLayout);
+        }
+
+        //internal bool StartNewGame()
+        //{
+        //    return _pairsGameClient.StartNewGame();
+        //}
+
+        //internal int GetRowCount()
+        //{
+        //    return _pairsGameClient.GetRowCount();
+        //}
+
+        //internal int GetColumnCount()
+        //{
+        //    return _pairsGameClient.GetColumnCount();
+        //}
 
         internal void NextMove(ICard card)
         {

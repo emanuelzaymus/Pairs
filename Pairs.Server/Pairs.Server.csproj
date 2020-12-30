@@ -45,7 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameOfPlayers.cs" />
     <Compile Include="GamesManager.cs" />
+    <Compile Include="Invitation.cs" />
+    <Compile Include="InvitationReply.cs" />
+    <Compile Include="InvitationsManager.cs" />
     <Compile Include="PairsGameService.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayersManager.cs" />

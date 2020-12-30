@@ -9,37 +9,30 @@
         Title="Game Pairs" Height="500" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Label Content="Your Nick: "/>
+            <Label x:Name="YourNickLabel" Content="-"/>
+            <Label Content="Your Score: "/>
+            <Label x:Name="YourScoreLabel" Content="-1"/>
+            <Label Content="Opponent: "/>
+            <Label x:Name="OpponentLabel" Content="-"/>
+            <Label Content="Opponent Score: "/>
+            <Label x:Name="OpponentScoreLabel" Content="-1"/>
             <Label Content="Player on Turn: "/>
             <Label x:Name="PlayerOnTurn" Content="x"/>
             <Label Content="Message: "/>
             <Label x:Name="Message" Content="x"/>
-            <Button x:Name="NewGameButton" Content="New Game" Margin="5" Click="NewGameButton_Click"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="NewGameButton" Content="New Game" Margin="5" Width="80" Click="NewGameButton_Click"/>
         </StackPanel>
 
         <Border Grid.Row="1" Padding="5">
-
-            <Grid x:Name="PairGrid">
-                <!--<Grid.RowDefinitions>
-                    <RowDefinition MinHeight="100"/>
-                    <RowDefinition MinHeight="100"/>
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition MinWidth="100"/>
-                    <ColumnDefinition MinWidth="100"/>
-                </Grid.ColumnDefinitions>-->
-
-                <!--<Button Grid.Row="0" Grid.Column="0" Margin="5">AAA</Button>
-                <Button Grid.Row="0" Grid.Column="1" Margin="5">BBB</Button>
-                <Button Grid.Row="1" Grid.Column="0" Margin="5">CCC</Button>
-                <Button Grid.Row="1" Grid.Column="1" Margin="5">DDD</Button>-->
-
-            </Grid>
+            <Grid x:Name="PairGrid"></Grid>
         </Border>
     </Grid>
 </Window>

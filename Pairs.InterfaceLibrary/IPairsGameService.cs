@@ -24,6 +24,24 @@ namespace Pairs.InterfaceLibrary
         [OperationContract]
         List<string> GetAvailablePlayers(int playerId);
 
+        /// <summary>
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="toPlayer"></param>
+        /// <param name="gameLayout"></param>
+        /// <returns>Whether an invitation for <paramref name="toPlayer"/> was created.</returns>
+        [OperationContract]
+        bool SendInvitation(int playerId, string toPlayer, GameLayout gameLayout);
+
+        [OperationContract]
+        string ReceiveInvitation(int playerId);
+
+        [OperationContract]
+        GameLayout AcceptInvitation(int playerId, string fromPlayer, bool isAccepted);
+
+        [OperationContract]
+        bool? ReadInvitationReply(int playerId);
+
         [OperationContract]
         bool StartNewGame(int playerId, int withPlayerId, GameLayout gameLayout);
 

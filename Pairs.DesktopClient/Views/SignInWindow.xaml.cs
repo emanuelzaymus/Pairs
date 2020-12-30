@@ -27,13 +27,9 @@ namespace Pairs.DesktopClient.Views
         private void SignInButton_Click(object sender, RoutedEventArgs e)
         {
             if (NewPlayerCredentials.Valid)
-            {
                 SignInButtonClicked(this, LogInWindow, NewPlayerCredentials);
-            }
             else
-            {
                 ShowAlertMessage(NewPlayerCredentials.GetAlertMessage());
-            }
         }
 
         private void ShowAlertMessage(string msg)

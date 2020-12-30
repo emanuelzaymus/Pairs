@@ -2,7 +2,7 @@
 
 namespace Pairs.DesktopClient.Presenter
 {
-    class NewGame
+    class NewGameData
     {
         public GameLayout GameLayout { get; set; }
 
