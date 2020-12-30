@@ -44,5 +44,15 @@ namespace Pairs.DesktopClient.Views
         {
             ShowAlertMessage("Player with such a Nick already exists.");
         }
+
+        private void NewPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            NewPlayerCredentials.Password = NewPasswordBox.Password;
+        }
+
+        private void RepeatedPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            NewPlayerCredentials.RepeatedPassword = RepeatedPasswordBox.Password;
+        }
     }
 }

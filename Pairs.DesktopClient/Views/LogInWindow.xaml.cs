@@ -24,6 +24,11 @@ namespace Pairs.DesktopClient.Views
             DataContext = PlayerCredentials;
         }
 
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            PlayerCredentials.Password = PasswordBox.Password;
+        }
+
         private void LogInButton_Click(object sender, RoutedEventArgs e)
         {
             LogInButtonClicked(this, PlayerCredentials);
@@ -38,5 +43,6 @@ namespace Pairs.DesktopClient.Views
         {
             WrongCredentialsLabel.Visibility = Visibility.Visible;
         }
+
     }
 }

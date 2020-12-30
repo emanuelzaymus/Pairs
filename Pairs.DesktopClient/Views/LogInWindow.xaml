@@ -22,7 +22,7 @@
         <TextBox Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding Nick}"/>
 
         <Label Grid.Row="1" Grid.Column="0" Content="Password:" VerticalAlignment="Center" Margin="5"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Margin="5" Text="{Binding Password}"/>
+        <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" Margin="5" PasswordChanged="PasswordBox_PasswordChanged"/>
 
         <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center">
             <Label x:Name="WrongCredentialsLabel" Content="Wrong credentials." Foreground="Red" Margin="5 0 5 0" Visibility="Hidden"/>

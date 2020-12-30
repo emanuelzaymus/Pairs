@@ -23,10 +23,10 @@
         <TextBox Grid.Row="0" Grid.Column="1" Margin="5" Text="{Binding Nick}"/>
 
         <Label Grid.Row="1" Grid.Column="0" Content="New Password:" VerticalAlignment="Center" Margin="5"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Margin="5" Text="{Binding Password}"/>
+        <PasswordBox x:Name="NewPasswordBox" Grid.Row="1" Grid.Column="1" Margin="5" PasswordChanged="NewPasswordBox_PasswordChanged"/>
 
         <Label Grid.Row="2" Grid.Column="0" Content="Repeat Password:" VerticalAlignment="Center" Margin="5"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Text="{Binding RepeatedPassword}"/>
+        <PasswordBox x:Name="RepeatedPasswordBox" Grid.Row="2" Grid.Column="1" Margin="5" PasswordChanged="RepeatedPasswordBox_PasswordChanged"/>
 
         <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center">
             <Label x:Name="AlertMessage" Content="" Foreground="Red" Margin="5 0 5 0"/>
