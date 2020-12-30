@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pairs.DesktopClient"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Game Pairs" Height="500" Width="800">
     <Grid>
         <Grid.RowDefinitions>

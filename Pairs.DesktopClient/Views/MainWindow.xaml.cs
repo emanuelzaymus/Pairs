@@ -75,7 +75,7 @@ namespace Pairs.DesktopClient.Views
         private void NewGameButton_Click(object sender, RoutedEventArgs e)
         {
             var availablePlayers = _pairsGamePresenter.GetAvailablePlayers();
-            new NewGameWindow(availablePlayers).ShowDialog();
+            new NewGameWindow(availablePlayers) { Owner = this }.ShowDialog();
         }
 
         private void StartNewGame(NewGameWindow newGameWindow, NewGame newGame)

@@ -21,6 +21,7 @@ namespace Pairs.DesktopClient.Views
             SignInButtonClicked = signInEventHandler;
             LogInWindow = logInWindow;
             DataContext = NewPlayerCredentials;
+            Owner = logInWindow;
         }
 
         private void SignInButton_Click(object sender, RoutedEventArgs e)

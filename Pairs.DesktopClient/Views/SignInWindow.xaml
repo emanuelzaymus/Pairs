@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pairs.DesktopClient.Views"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
         Title="Sign In" Height="220" Width="340" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
