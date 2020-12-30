@@ -1,6 +1,5 @@
 ﻿using Pairs.DesktopClient.Presenter;
 using Pairs.InterfaceLibrary;
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +19,6 @@ namespace Pairs.DesktopClient.Views
         {
             InitializeComponent();
 
-            _pairsGamePresenter.MessageShown += ShowMessage;
             _pairsGamePresenter.PlayerOnTurnUpdated += UpdatePlayerOnTurn;
 
             _pairsGamePresenter.GetCard = GetCard;
@@ -30,6 +28,7 @@ namespace Pairs.DesktopClient.Views
             _pairsGamePresenter.AcceptedGameStarted += StartNewGame;
 
             _pairsGamePresenter.ScoreAdded += AddPoint;
+            _pairsGamePresenter.ResultsEvaluated += ShowResults;
 
             ShowLogInWindow();
         }
@@ -118,6 +117,16 @@ namespace Pairs.DesktopClient.Views
                 OpponentScoreLabel.Content = (int)OpponentScoreLabel.Content + 1;
         }
 
+        private void ShowResults(bool? youWon)
+        {
+            if (!youWon.HasValue)
+                MessageBox.Show(this, $"It's draw.", "Results", MessageBoxButton.OK);
+            else if (youWon.Value)
+                MessageBox.Show(this, $"You won.", "Results", MessageBoxButton.OK);
+            else
+                MessageBox.Show(this, $"You lost.", "Results", MessageBoxButton.OK);
+        }
+
         private void ClearGameBoard()
         {
             PairGrid.Children.Clear();
@@ -153,11 +162,6 @@ namespace Pairs.DesktopClient.Views
         {
             CardButton card = (CardButton)sender;
             _pairsGamePresenter.NextMove(card);
-        }
-
-        private void ShowMessage(string msg)
-        {
-            Message.Content = msg;
         }
 
         private void UpdatePlayerOnTurn(string playerOnTurn)

@@ -1,6 +1,5 @@
 ﻿using Pairs.Core;
 using Pairs.InterfaceLibrary;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,7 +26,10 @@ namespace Pairs.Server
 
         internal void RemoveGame(int playerId)
         {
-            _games.RemoveAll(x => x.FirstPlayer.Id == playerId || x.SecondPlayer.Id == playerId);
+            GameOfPlayers found = GetGameOfPlayers(playerId);
+            found.FirstPlayer.IsPlaying = false;
+            found.SecondPlayer.IsPlaying = false;
+            _games.Remove(found);
         }
     }
 }

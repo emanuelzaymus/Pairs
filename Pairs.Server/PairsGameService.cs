@@ -96,11 +96,6 @@ namespace Pairs.Server
             return _gamesManager.GetGame(playerId).PlayerIdOnTurn;
         }
 
-        public int[] GetScores(int playerId)
-        {
-            return _gamesManager.GetGame(playerId).Scores;
-        }
-
         public bool GetWasSuccessfulMove(int playerId)
         {
             return _gamesManager.GetGame(playerId).WasSuccessfulMove;

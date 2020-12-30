@@ -23,8 +23,6 @@
             <Label x:Name="OpponentScoreLabel" Content="-1"/>
             <Label Content="Player on Turn: "/>
             <Label x:Name="PlayerOnTurn" Content="x"/>
-            <Label Content="Message: "/>
-            <Label x:Name="Message" Content="x"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="NewGameButton" Content="New Game" Margin="5" Width="80" Click="NewGameButton_Click"/>

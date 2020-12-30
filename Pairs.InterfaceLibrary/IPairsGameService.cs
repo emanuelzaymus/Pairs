@@ -34,9 +34,6 @@ namespace Pairs.InterfaceLibrary
         bool? ReadInvitationReply(int playerId);
 
         [OperationContract]
-        int[] GetScores(int playerId);
-
-        [OperationContract]
         int GetPlayerOnTurn(int playerId);
 
         [OperationContract]

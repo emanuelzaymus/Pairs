@@ -43,12 +43,13 @@ namespace Pairs.DesktopClient.Model
                 PlayerOnTurnChanged?.Invoke(_opponent);
         }
 
-        public delegate void ResultsEvaluatedEventHandler(string winner, int[] scores);
+        public delegate void ResultsEvaluatedEventHandler(bool? youWon);
         public event ResultsEvaluatedEventHandler ResultsEvaluated;
         protected virtual void OnResultsEvaluated()
         {
-            int winner = _pairsGameService.GetWinner(_player.Id);
-            ResultsEvaluated?.Invoke(winner == _player.Id ? _player.Nick : _opponent, _pairsGameService.GetScores(_player.Id));
+            int winnerId = _pairsGameService.GetWinner(_player.Id);
+            bool? res = winnerId >= 0 ? winnerId == _player.Id : (bool?)null;
+            ResultsEvaluated?.Invoke(res);
         }
 
         public delegate void OpponentsCardShownEventHandler(Card card);

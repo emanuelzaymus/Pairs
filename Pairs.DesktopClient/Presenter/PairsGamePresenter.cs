@@ -11,10 +11,6 @@ namespace Pairs.DesktopClient.Presenter
     {
         private readonly PairsGameClient _pairsGameClient = new PairsGameClient();
 
-        public delegate void MessageShownEventHander(string message);
-        public event MessageShownEventHander MessageShown;
-        protected virtual void OnMessageShown(string message) => MessageShown?.Invoke(message);
-
         public delegate void PlayerOnTurnUpdatedEventHandler(string playerOnTurn);
         public event PlayerOnTurnUpdatedEventHandler PlayerOnTurnUpdated;
         protected virtual void OnPlayerOnTurnUpdated(string playerOnTurn) => PlayerOnTurnUpdated?.Invoke(playerOnTurn);
@@ -36,6 +32,10 @@ namespace Pairs.DesktopClient.Presenter
         public event ScoreAddedEventHandler ScoreAdded;
         protected virtual void OnScoreAdded(bool forMe) => ScoreAdded?.Invoke(forMe);
 
+        public delegate void ResultsEvaluatedEventHandler(bool? youWon);
+        public event ResultsEvaluatedEventHandler ResultsEvaluated;
+        protected virtual void OnResultsEvaluated(bool? youWon) => ResultsEvaluated?.Invoke(youWon);
+
         public delegate ICard GetCardHandler(int row, int column);
         public GetCardHandler GetCard;
 
@@ -45,7 +45,7 @@ namespace Pairs.DesktopClient.Presenter
             _pairsGameClient.CardsHidden += HideCardsAsync;
             _pairsGameClient.FoundPairRemoved += RemoveFoundPairAsync;
             _pairsGameClient.PlayerOnTurnChanged += ChangePlayerOnTurn;
-            _pairsGameClient.ResultsEvaluated += ShowResults;
+            _pairsGameClient.ResultsEvaluated += EvaluateResults;
 
             _pairsGameClient.OpponentsCardShown += ShowOpponentsCard;
             _pairsGameClient.OpponentsCardsHidden += HideOpponentsCards;
@@ -103,9 +103,13 @@ namespace Pairs.DesktopClient.Presenter
             OnPlayerOnTurnUpdated(playerNick ?? "---");
         }
 
+        private void EvaluateResults(bool? youWon)
+        {
+            OnResultsEvaluated(youWon);
+        }
+
         private async void HideCardsAsync(ICard card1, ICard card2)
         {
-            OnMessageShown("FAILURE");
             await Wait();
             card1.Hide();
             card2.Hide();
@@ -113,21 +117,13 @@ namespace Pairs.DesktopClient.Presenter
 
         private async void RemoveFoundPairAsync(ICard card1, ICard card2)
         {
-            OnMessageShown("SUCCESS");
             await Wait();
             card1.Remove();
             card2.Remove();
         }
 
-        private void ShowResults(string winner, int[] scores)
-        {
-            OnMessageShown((winner != null ? $"The winner is player {winner}." : $"It's draw.")
-                + $" (First Pl: {scores[0]}, Second Pl: {scores[1]})");
-        }
-
         private void ShowCard(ICard card, int cardNumber)
         {
-            OnMessageShown($"{card} => {card.Row} {card.Column}");
             card.Show(cardNumber);
         }
 
